@@ -1,4 +1,0 @@
-﻿  snake_base.c
-C:\Users\wooju\OneDrive\Desktop\자료\국립 공주대학교\24-2\C프로그래밍\Snake_Game\snake_base.c(221,18): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Desktop\자료\국립 공주대학교\24-2\C프로그래밍\Snake_Game\snake_base.c(486,8): warning C4244: '함수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Snake_Game.vcxproj -> C:\Users\wooju\OneDrive\Desktop\자료\국립 공주대학교\24-2\C프로그래밍\Snake_Game\x64\Debug\Snake_Game.exe
