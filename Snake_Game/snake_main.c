@@ -17,18 +17,34 @@ struct BODY
 typedef struct BODY body; // 타입 정의
 
 
+struct BOMB_BOX
+{
+	int x, y;
+};
+typedef struct BOMB_BOX BOMB;
+
+
+enum difficulties {
+	
+};
 
 
 body * head = NULL; // 머리 선언
+
+// 절단된 몸통 보관용, 배열로 하면 크기 배정이 애매함 -> 연결 리스크를 하나를 더 만들까?
+body* cut_bodies = NULL;
 
 // 연결리스트 이용으로  기존에 있던 변수 x, y 필요 없어짐에 따라 제거
 int i, j, height = 22, width = 22;  
 int gameover, score;
 int fruitx, fruity, flag;
-int eventx, eventy, bombx, bomby;  // event -> '?', bomb -> ▣
-int event_bool = 0, bomb_bool = 0;// event와 bomb이 생성되어있는가확인
+int mysteryx, mysteryy;  // mystery -> '?'
+BOMB bomb[4]; // bomb -> ▣
+int mystery_cnt = 0, bomb_cnt = 0;// mystery와 bomb의 개수
 int body_length = 1;
-int speed = 200; // easy -> 200, normal -> 100, hard -> 50 정도로 세팅하면 재밌을 듯
+int speed = 200;
+
+
 
 
 
@@ -66,8 +82,8 @@ body* create_body(int x, int y, int direction) {
 }
 
 // 마지막 몸통(꼬리) 탐색
-body* find_tail() {
-	body* cur = head;
+body* find_tail(body* st) {
+	body* cur = st;
 	while (cur->next != NULL) {
 		cur = cur->next;
 	}
@@ -76,8 +92,8 @@ body* find_tail() {
 }
 
 // 생성한 몸통을 가장 마지막에 연결
-void insert_tail(body* new_body) {
-	body* tail = find_tail();
+void insert_body(body * st, body* new_body) {
+	body* tail = find_tail(st);
 	tail->next = new_body;
 }
 
@@ -144,20 +160,38 @@ void rand_speed(int num) {
 		speed += rand() % 100;
 }
 
-// 1 -> 1~50 사이의 값을 score에서 뺌.....+ 점수가 0 이하이면 점수 감소 X (2024.11.22 수정)
-// 2 -> 1~50 사이의 값을 score에 더함
-void rand_score(int num) {
-	if (num == 1)
-		score -= score > 0 ? ((rand() % 50) + 1) : 0;
+// 1 -> 미스테리 박스 점수 변동 기능에 사용, 매개 변수로 받은 change 값을 더 함(change가 음수인 경우에 점수가 0 이하이면 점수 변화 X (2024.11.23 수정)
+// 2 -> 폭탄 박스를 위한 기능, 현재 점수와는 상관 없이 무조건 점수를 변화 시킴
+void change_score(int num,int change) {
 
-	if (num == 2)
-		score += (rand() % 50) + 1;
+	switch (num) {
+	case 1:
+		score += (score > 0 || change > 0) ? change : 0;
+		break;
+
+	case 2:
+		score += change;
+		break;
+	
+	default:
+		break;
+	
+	}
+
 }
 
+
+// 1~r 사이의 랜덤한 값을 반환
+int random_num(int r) {
+	return rand() % r + 1;
+}
+
+
+
 //  1~5 사이 개수의 몸통 추가
-void rand_body_add() {
-	for (int i = 1; i <= (rand() % 5) + 1; i++) {
-		insert_tail(create_body(head->x, head->y, head->direction));
+void body_add(int r) {
+	for (int i = 0; i < r; i++) {
+		insert_body(head, create_body(head->x, head->y, head->direction));
 		body_length++;
 	}
 
@@ -167,10 +201,8 @@ void rand_body_add() {
 
 
 
-
-void gotoxy(int x, int y)
-
-{
+// 커서 위치 이동
+void gotoxy(int x, int y){
 
 	COORD pos = { x,y };
 
@@ -203,36 +235,41 @@ void setup()
 	// fruit
 	fruitx = 0;
 	while (fruitx == 0) {
-		fruitx = rand() % 20;
+		fruitx = rand() % 20 + 1;
 	}
 
 	fruity = 0;
 	while (fruity == 0) {
-		fruity = rand() % 20;
+		fruity = rand() % 20 + 1;
 	}
 
 
 	// bomb
-	bombx = 0;
-	bomby = 0;
-	while (bombx == 0 || bomby == 0
-		||(bombx == fruitx  && bomby == fruity)
-		||(bombx == eventx && bomby == eventy)) {
+	for (int i = 0; i < 4; i++) {
+		bomb[i].x = NULL;
+		bomb[i].y = NULL;
+	}
 
-		bombx = rand() % 20;
-		bomby = rand() % 20;
+	bomb[0].x = 0;
+	bomb[0].y = 0;
+	while (bomb[0].x == 0 || bomb[0].y == 0
+		||(bomb[0].x == fruitx  && bomb[0].y == fruity)
+		||(bomb[0].x == mysteryx && bomb[0].y == mysteryy)) {
+
+		bomb[0].x = rand() % 20 + 1;
+		bomb[0].y = rand() % 20 + 1;
 	}
 
 	
 
 	// event
-	eventx = 0;
-	eventy = 0;
-	while (eventx == 0 || eventy == 0
-		|| (eventx == fruitx && eventy == fruity)
-		|| (eventx == bombx && eventy == bomby)) {
-		eventx = rand() % 20;
-		eventy = rand() % 20;
+	mysteryx = 0;
+	mysteryy = 0;
+	while (mysteryx == 0 || mysteryy == 0
+		|| (mysteryx == fruitx && mysteryy == fruity)
+		|| (mysteryx == bomb[0].x && mysteryy == bomb[0].y)) {
+		mysteryx = rand() % 20 + 1;
+		mysteryy = rand() % 20  +1;
 	}
 
 	
@@ -266,27 +303,27 @@ void draw()
 					printf("*");
 
 				}
-				else if (i == bombx && j == bomby)
+				else if (i == bomb[0].x && j == bomb[0].y
+					|| i == bomb[1].x && j == bomb[1].y
+					|| i == bomb[2].x && j == bomb[2].y
+					|| i == bomb[3].x && j == bomb[3].y) // bomb의 모든 좌표 확인
 				{
-					if (bomb_bool == 1) {
+					if (bomb_cnt == 0/*일단 임시로 0개 이면 만들게 해 둠, 레벨에 따라 생길 수 있게 할 것*/) {
 						printf("▣");
-					}
-					else if (rand() % 100 < 5 && bomb_bool == 0) {
-						bomb_bool = 1;
-						printf("▣");
+					
 					}
 					else
 					{
 						printf(" ");
 					}
 				}
-				else if (i == eventx && j == eventy )
+				else if (i == mysteryx && j == mysteryy )
 				{
-					if (event_bool == 1) {
+					if (mystery_cnt == 1) {
 						printf("?");
 					}
-					else if (rand() % 100 < 10 && event_bool == 0) {
-						event_bool = 1;
+					else if (rand() % 100 < 10 && mystery_cnt == 0) {
+						mystery_cnt = 1;
 						printf("?");
 					}
 					else
@@ -389,57 +426,59 @@ void logic()
 		}
 
 
-		insert_tail(create_body(head->x, head->y, head->direction)); // fruit을 먹었을 때 몸통 추가
+		insert_body(head, create_body(head->x, head->y, head->direction)); // fruit을 먹었을 때 몸통 추가
 		body_length++;
 
 		score += 10;
 	}
 
+	/*
+	레벨에 따라 bomb생성 하는 기능 만들어야 함
+	*/
+
+
 
 	// snake가 bomb에 닿았을 때
-	if ((head->x == bombx && head->y == bomby) /*|| (round_snake(bombx, bomby) == 1)*/) {
-		gameover = 1;
+	for (int i = 0; i < 4; i++) {
+		if ((head->x == bomb[i].x && head->y == bomb[i].y) /*|| (round_snake(bombx, bomby) == 1)*/) {
+			change_score(2, -50);
+		}
 	}
 
 
 	// snake가 event에 닿았을 때
-	if ((head->x == eventx && head->y == eventy) /*|| (round_snake(eventx, eventy) == 1)*/) {
+	if ((head->x == mysteryx && head->y == mysteryy) /*|| (round_snake(eventx, eventy) == 1)*/) {
 
 		// event
-		eventx = 0;
-		eventy = 0;
-		while (eventx == 0 || eventy == 0
-			|| (eventx == fruitx && eventy == fruity)
-			|| (eventx == bombx && eventy == bomby)) {
-			eventx = rand() % 20;
-			eventy = rand() % 20;
-		}
-
+		mysteryx = 0;
+		mysteryy = 0;
 		
-		int effect = rand() % 5;
+		for (int i = 0; i < 4; i++) {
+			while (mysteryx == 0 || mysteryy == 0
+				|| (mysteryx == fruitx && mysteryy == fruity)
+				|| (mysteryx == bomb[i].x && mysteryy == bomb[i].y)) {
+				mysteryx = rand() % 20;
+				mysteryy = rand() % 20;
+			}
+		}
+		
+		int effect = rand() % 3;
 		switch (effect) {
-		case 0:
-			rand_speed(1);
+		case 0: // 점수 증가
+			change_score(1, random_num(50));
 			break;
 
-		case 1:
-			rand_speed(2);
+		case 1: // 점수 감소
+			change_score(1, -random_num(50));
 			break;
 
-		case 2:
-			rand_score(1);
-			break;
-
-		case 3:
-			rand_score(2);
-			break;
-		case 4:
-			rand_body_add();
+		case 2: // 몸통 길이 증가
+			body_add(random_num(5));
 			break;
 		}
 		
 
-		event_bool = 0;
+		mystery_cnt--;
 
 	}
 }
