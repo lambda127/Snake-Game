@@ -1,9 +1,9 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\wooju\\OneDrive\\Documents\\GitHub\\Snake-Game\\Snake_Game\\",
+  "WorkspaceRootPath": "C:\\Users\\\uAE40\uC608\uC6D0\\OneDrive\\\uBB38\uC11C\\GitHub\\Snake-Game\\Snake_Game\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{34002DEA-BF29-4B26-8638-9AD93EBA48EC}|Snake_Game.vcxproj|C:\\Users\\wooju\\OneDrive\\Documents\\GitHub\\Snake-Game\\Snake_Game\\snake_main.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{34002DEA-BF29-4B26-8638-9AD93EBA48EC}|Snake_Game.vcxproj|C:\\Users\\\uAE40\uC608\uC6D0\\OneDrive\\\uBB38\uC11C\\GitHub\\Snake-Game\\Snake_Game\\snake_main.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{34002DEA-BF29-4B26-8638-9AD93EBA48EC}|Snake_Game.vcxproj|solutionrelative:snake_main.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
@@ -14,25 +14,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{c9c0ae26-aa77-11d2-b3f0-0000f87570ee}"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "snake_main.c",
-              "DocumentMoniker": "C:\\Users\\wooju\\OneDrive\\Documents\\GitHub\\Snake-Game\\Snake_Game\\snake_main.c",
+              "DocumentMoniker": "C:\\Users\\\uAE40\uC608\uC6D0\\OneDrive\\\uBB38\uC11C\\GitHub\\Snake-Game\\Snake_Game\\snake_main.c",
               "RelativeDocumentMoniker": "snake_main.c",
-              "ToolTip": "C:\\Users\\wooju\\OneDrive\\Documents\\GitHub\\Snake-Game\\Snake_Game\\snake_main.c*",
-              "RelativeToolTip": "snake_main.c*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAiwA8AAAACAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\\uAE40\uC608\uC6D0\\OneDrive\\\uBB38\uC11C\\GitHub\\Snake-Game\\Snake_Game\\snake_main.c",
+              "RelativeToolTip": "snake_main.c",
+              "ViewState": "AQIAAPUBAAAAAAAAAAAAAEAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
               "WhenOpened": "2024-11-18T12:39:27.492Z",
               "EditorCaption": ""

@@ -1,4 +1,4 @@
-// C program to build the complete 
+ï»¿// C program to build the complete 
 // snake game 
 #include <conio.h> 
 #include <stdio.h> 
@@ -6,6 +6,9 @@
 #include <io.h> 
 #include <Windows.h>
 #include <time.h>
+#include <string.h>
+
+#include <wchar.h>
 
 
 
@@ -14,7 +17,7 @@ struct BODY
 	int x, y, direction; //direction : 1 -> -y, 2 -> -x, 3 -> +y, 4-> +x
 	struct BODY* next;
 };
-typedef struct BODY body; // Å¸ÀÔ Á¤ÀÇ
+typedef struct BODY body; // íƒ€ì… ì •ì˜
 
 
 struct BOMB_BOX
@@ -25,33 +28,84 @@ typedef struct BOMB_BOX BOMB;
 
 
 enum difficulties {
-	
+	lvl1 = 300,
+	lvl2 = 250,
+	lvl3 = 175,
+	lvl4 = 120,
+	lvl5 = 80
 };
 
 
-body * head = NULL; // ¸Ó¸® ¼±¾ğ
+body * head = NULL; // ë¨¸ë¦¬ ì„ ì–¸
 
-// Àı´ÜµÈ ¸öÅë º¸°ü¿ë, ¹è¿­·Î ÇÏ¸é Å©±â ¹èÁ¤ÀÌ ¾Ö¸ÅÇÔ -> ¿¬°á ¸®½ºÅ©¸¦ ÇÏ³ª¸¦ ´õ ¸¸µé±î?
+// ì ˆë‹¨ëœ ëª¸í†µ ë³´ê´€ìš©, ë°°ì—´ë¡œ í•˜ë©´ í¬ê¸° ë°°ì •ì´ ì• ë§¤í•¨ -> ì—°ê²° ë¦¬ìŠ¤í¬ë¥¼ í•˜ë‚˜ë¥¼ ë” ë§Œë“¤ê¹Œ? 
 body* cut_bodies = NULL;
 
-// ¿¬°á¸®½ºÆ® ÀÌ¿ëÀ¸·Î  ±âÁ¸¿¡ ÀÖ´ø º¯¼ö x, y ÇÊ¿ä ¾ø¾îÁü¿¡ µû¶ó Á¦°Å
+// ì—°ê²°ë¦¬ìŠ¤íŠ¸ ì´ìš©ìœ¼ë¡œ  ê¸°ì¡´ì— ìˆë˜ ë³€ìˆ˜ x, y í•„ìš” ì—†ì–´ì§ì— ë”°ë¼ ì œê±°
 int i, j, height = 22, width = 22;  
 int gameover, score;
 int fruitx, fruity, flag;
 int mysteryx, mysteryy;  // mystery -> '?'
-BOMB bomb[4]; // bomb -> ¢Ã
-int mystery_cnt = 0, bomb_cnt = 0;// mystery¿Í bombÀÇ °³¼ö
+BOMB bomb[4]; // bomb -> â–£
+int mystery_cnt = 0, bomb_cnt = 0;// mysteryì™€ bombì˜ ê°œìˆ˜
 int body_length = 1;
 int speed = 200;
+int level = 1;
 
 
 
 
 
 
+// ë ˆë²¨ ì„ íƒ
+int select_level() {
+	enum difficulties speed;
+	int sel = 0;
+	char answer[sizeof("ë‹¹ì—°í•˜ì§€ë ")];
+
+	printf("(âˆ©^o^)âŠƒâ”â˜† ì•ˆë…•í•˜ì§€ë ~ ë‚˜ëŠ” ì§€ë ì´ì§€ë !! \n");
+	printf("ë‚´ê°€ ì„±ì¥í•  ìˆ˜ ìˆë„ë¡ ì˜ ë„ì™€ì¤„ ìˆ˜ ìˆì§€ë ?(ë‹¹ì—°í•˜ì§€ë  or ì•„ë‹ˆì§€ë )\n");
+	scanf_s("%s", answer, sizeof("ë‹¹ì—°í•˜ì§€ë "));
+	if (strcmp(answer, "ë‹¹ì—°í•˜ì§€ë ") == 0) {
+		printf("ì¢‹ì•˜ì§€ë !! ê·¸ëŸ¼ ì´ì œ ì›í•˜ëŠ” ë ˆë²¨ì„ ë§í•´ì§€ë !");
+	}
+	else {
+		printf("ì•Œê² ì§€ë ..ê·¸ëŸ¼ ì•„ì‰½ì§€ë§Œ ì—¬ê¸°ì„œ ì¢…ë£Œí•˜ê² ì§€ë ..");
+		exit(0);
+	}
+	scanf_s("%d", &sel);
+
+	switch(sel) {
+	case 1:
+		level = 1;
+		speed = lvl1;
+		break;
+	case 2:
+		level = 2;
+		speed = lvl2;
+		break;
+	case 3:
+		level = 3;
+		speed = lvl3;
+		break;
+	case 4:
+		level = 4;
+		speed = lvl4;
+		break;
+	case 5:
+		level = 5;
+		speed = lvl5;
+		break;
+	}
+
+	return speed;
+}
 
 
-// ¸öÅë »ı¼º, ¸Ó¸® È¤Àº ¾Õ ¸öÅëÀÇ ÁÂÇ¥, º¸°í ÀÖ´Â ¹æÇâÀ» ¹Ş¾Æ ±× ´ÙÀ½ À§Ä¡¿¡ ÁÂÇ¥ ¼³Á¤, ¹Ù¶óº¸´Â ¹æÇâ ¼³Á¤
+
+
+
+// ëª¸í†µ ìƒì„±, ë¨¸ë¦¬ í˜¹ì€ ì• ëª¸í†µì˜ ì¢Œí‘œ, ë³´ê³  ìˆëŠ” ë°©í–¥ì„ ë°›ì•„ ê·¸ ë‹¤ìŒ ìœ„ì¹˜ì— ì¢Œí‘œ ì„¤ì •, ë°”ë¼ë³´ëŠ” ë°©í–¥ ì„¤ì •
 body* create_body(int x, int y, int direction) {
 
 	body* new_body = (body*)malloc(sizeof(body));
@@ -81,7 +135,7 @@ body* create_body(int x, int y, int direction) {
 	return new_body;
 }
 
-// ¸¶Áö¸· ¸öÅë(²¿¸®) Å½»ö
+// ë§ˆì§€ë§‰ ëª¸í†µ(ê¼¬ë¦¬) íƒìƒ‰
 body* find_tail(body* st) {
 	body* cur = st;
 	while (cur->next != NULL) {
@@ -91,13 +145,13 @@ body* find_tail(body* st) {
 	return cur;
 }
 
-// »ı¼ºÇÑ ¸öÅëÀ» °¡Àå ¸¶Áö¸·¿¡ ¿¬°á
+// ìƒì„±í•œ ëª¸í†µì„ ê°€ì¥ ë§ˆì§€ë§‰ì— ì—°ê²°
 void insert_body(body * st, body* new_body) {
 	body* tail = find_tail(st);
 	tail->next = new_body;
 }
 
-// ÁÂÇ¥¸¦ ¹Ş¾Æ ÇØ´çÁÂÇ¥¿¡ ¸öÅëÀÌ ÀÖ´ÂÁö È®ÀÎÇÏ´Â ÇÔ¼ö
+// ì¢Œí‘œë¥¼ ë°›ì•„ í•´ë‹¹ì¢Œí‘œì— ëª¸í†µì´ ìˆëŠ”ì§€ í™•ì¸í•˜ëŠ” í•¨ìˆ˜
 int round_snake(int x, int y) {
 	body* cur = head->next;
 
@@ -117,8 +171,8 @@ int round_snake(int x, int y) {
 
 
 
-// ¸Ó¸®¸¦ Á¦¿ÜÇÑ ¸öÅëÀ» ¿òÁ÷ÀÌ´Â ±â´É
-// ¾Õ ¸öÅëÀÇ ÁÂÇ¥ ÀúÀå(prev_x, prev_y), ÀÚ½ÅÀÇ ÁÂÇ¥ ÀÓ½Ã ÀúÀå(temp_x, temp_y), ÀÚ½Å¿¡°Ô ¾Õ ¸öÅë ÁÂÇ¥ ÀúÀå, ÀÚ½ÅÀÇ ÁÂÇ¥ ¿´´ø ÁÂÇ¥ prev_x, prevy¾Ö ÀúÀå
+// ë¨¸ë¦¬ë¥¼ ì œì™¸í•œ ëª¸í†µì„ ì›€ì§ì´ëŠ” ê¸°ëŠ¥
+// ì• ëª¸í†µì˜ ì¢Œí‘œ ì €ì¥(prev_x, prev_y), ìì‹ ì˜ ì¢Œí‘œ ì„ì‹œ ì €ì¥(temp_x, temp_y), ìì‹ ì—ê²Œ ì• ëª¸í†µ ì¢Œí‘œ ì €ì¥, ìì‹ ì˜ ì¢Œí‘œ ì˜€ë˜ ì¢Œí‘œ prev_x, prevyì•  ì €ì¥
 void move_body() {
 	body* cur = head;
 	int prev_x = cur->x;
@@ -149,9 +203,9 @@ void move_body() {
 
 
 
-// **** »èÁ¦ ¿¹Á¤ ****
-// 1 -> 0~149 »çÀÌÀÇ °ªÀ» speed¿¡¼­ »­ -> ¼Óµµ Áõ°¡
-// 2 -> 0~99 »çÀÌÀÇ °ªÀ» speed¿¡ ´õÇÔ -> ¼Óµµ °¨¼Ò
+// **** ì‚­ì œ ì˜ˆì • ****
+// 1 -> 0~149 ì‚¬ì´ì˜ ê°’ì„ speedì—ì„œ ëºŒ -> ì†ë„ ì¦ê°€
+// 2 -> 0~99 ì‚¬ì´ì˜ ê°’ì„ speedì— ë”í•¨ -> ì†ë„ ê°ì†Œ
 void rand_speed(int num) {
 	if (num == 1)
 		speed -= rand() % 150;
@@ -160,8 +214,8 @@ void rand_speed(int num) {
 		speed += rand() % 100;
 }
 
-// 1 -> ¹Ì½ºÅ×¸® ¹Ú½º Á¡¼ö º¯µ¿ ±â´É¿¡ »ç¿ë, ¸Å°³ º¯¼ö·Î ¹ŞÀº change °ªÀ» ´õ ÇÔ(change°¡ À½¼öÀÎ °æ¿ì¿¡ Á¡¼ö°¡ 0 ÀÌÇÏÀÌ¸é Á¡¼ö º¯È­ X (2024.11.23 ¼öÁ¤)
-// 2 -> ÆøÅº ¹Ú½º¸¦ À§ÇÑ ±â´É, ÇöÀç Á¡¼ö¿Í´Â »ó°ü ¾øÀÌ ¹«Á¶°Ç Á¡¼ö¸¦ º¯È­ ½ÃÅ´
+// 1 -> ë¯¸ìŠ¤í…Œë¦¬ ë°•ìŠ¤ ì ìˆ˜ ë³€ë™ ê¸°ëŠ¥ì— ì‚¬ìš©, ë§¤ê°œ ë³€ìˆ˜ë¡œ ë°›ì€ change ê°’ì„ ë” í•¨(changeê°€ ìŒìˆ˜ì¸ ê²½ìš°ì— ì ìˆ˜ê°€ 0 ì´í•˜ì´ë©´ ì ìˆ˜ ë³€í™” X (2024.11.23 ìˆ˜ì •)
+// 2 -> í­íƒ„ ë°•ìŠ¤ë¥¼ ìœ„í•œ ê¸°ëŠ¥, í˜„ì¬ ì ìˆ˜ì™€ëŠ” ìƒê´€ ì—†ì´ ë¬´ì¡°ê±´ ì ìˆ˜ë¥¼ ë³€í™” ì‹œí‚´
 void change_score(int num,int change) {
 
 	switch (num) {
@@ -181,14 +235,14 @@ void change_score(int num,int change) {
 }
 
 
-// 1~r »çÀÌÀÇ ·£´ıÇÑ °ªÀ» ¹İÈ¯
+// 1~r ì‚¬ì´ì˜ ëœë¤í•œ ê°’ì„ ë°˜í™˜
 int random_num(int r) {
 	return rand() % r + 1;
 }
 
 
 
-//  1~5 »çÀÌ °³¼öÀÇ ¸öÅë Ãß°¡
+//  1~5 ì‚¬ì´ ê°œìˆ˜ì˜ ëª¸í†µ ì¶”ê°€
 void body_add(int r) {
 	for (int i = 0; i < r; i++) {
 		insert_body(head, create_body(head->x, head->y, head->direction));
@@ -201,7 +255,7 @@ void body_add(int r) {
 
 
 
-// Ä¿¼­ À§Ä¡ ÀÌµ¿
+// ì»¤ì„œ ìœ„ì¹˜ ì´ë™
 void gotoxy(int x, int y){
 
 	COORD pos = { x,y };
@@ -215,11 +269,17 @@ void gotoxy(int x, int y){
 // within the boundary 
 void setup()
 {
-	// Ä¿¼­ ¼¼ÆÃ
-	CONSOLE_CURSOR_INFO cursorInfo = { 0, }; // Ã£¾ÆºÁ¾ß ÇÔ
-	cursorInfo.dwSize = 1; // Ä¿¼­ ±½±â (1 ~ 100)
-	cursorInfo.bVisible = FALSE; // Ä¿¼­ Visible TRUE(º¸ÀÓ) FALSE(¼û±è)
-	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo); // ¼³Á¤ Àû¿ë
+
+	// ë‚œì´ë„ ì„ íƒ
+	speed = select_level();
+	system("cls");
+
+
+	// ì»¤ì„œ ì„¸íŒ…
+	CONSOLE_CURSOR_INFO cursorInfo = { 0, }; // ì°¾ì•„ë´ì•¼ í•¨
+	cursorInfo.dwSize = 1; // ì»¤ì„œ êµµê¸° (1 ~ 100)
+	cursorInfo.bVisible = FALSE; // ì»¤ì„œ Visible TRUE(ë³´ì„) FALSE(ìˆ¨ê¹€)
+	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo); // ì„¤ì • ì ìš©
 
 
 	gameover = 0;
@@ -231,6 +291,8 @@ void setup()
 	head->y = width / 2;
 	head->next = NULL;
 	head->direction = NULL;
+
+
 
 	// fruit
 	fruitx = 0;
@@ -280,7 +342,7 @@ void setup()
 // Function to draw the boundaries 
 void draw()
 {
-	gotoxy(0, 0); // Ä¿¼­ À§Ä¡ Ã³À½À¸·Î º¸³»±â -> Áö¿ì°í ´Ù½Ã ÀÛ¼ºÇÏ¹Ç·Î½á ¹ß»ıÇÑ ±ôºıÀÓ Á¦°Å
+	gotoxy(0, 0); // ì»¤ì„œ ìœ„ì¹˜ ì²˜ìŒìœ¼ë¡œ ë³´ë‚´ê¸° -> ì§€ìš°ê³  ë‹¤ì‹œ ì‘ì„±í•˜ë¯€ë¡œì¨ ë°œìƒí•œ ê¹œë¹¡ì„ ì œê±°
 	//system("cls");
 
 	for (i = 0; i < height; i++) {
@@ -294,7 +356,7 @@ void draw()
 				if (i == head->x && j == head->y) {
 					printf("O");
 				}
-				else if (round_snake(i, j) == 1) // ¿µ¿ªÀ» ±×¸®°í ÀÖ´Â À§Ä¡¿¡ ¸öÅëÀÌ ÀÖ´ÂÁö È®ÀÎ -> Á¸Àç O => 'o'Ãâ·Â
+				else if (round_snake(i, j) == 1) // ì˜ì—­ì„ ê·¸ë¦¬ê³  ìˆëŠ” ìœ„ì¹˜ì— ëª¸í†µì´ ìˆëŠ”ì§€ í™•ì¸ -> ì¡´ì¬ O => 'o'ì¶œë ¥
 				{
 					printf("o");
 				}
@@ -306,10 +368,10 @@ void draw()
 				else if (i == bomb[0].x && j == bomb[0].y
 					|| i == bomb[1].x && j == bomb[1].y
 					|| i == bomb[2].x && j == bomb[2].y
-					|| i == bomb[3].x && j == bomb[3].y) // bombÀÇ ¸ğµç ÁÂÇ¥ È®ÀÎ
+					|| i == bomb[3].x && j == bomb[3].y) // bombì˜ ëª¨ë“  ì¢Œí‘œ í™•ì¸
 				{
-					if (bomb_cnt == 0/*ÀÏ´Ü ÀÓ½Ã·Î 0°³ ÀÌ¸é ¸¸µé°Ô ÇØ µÒ, ·¹º§¿¡ µû¶ó »ı±æ ¼ö ÀÖ°Ô ÇÒ °Í*/) {
-						printf("¢Ã");
+					if (bomb_cnt == 0/*ì¼ë‹¨ ì„ì‹œë¡œ 0ê°œ ì´ë©´ ë§Œë“¤ê²Œ í•´ ë‘ , ë ˆë²¨ì— ë”°ë¼ ìƒê¸¸ ìˆ˜ ìˆê²Œ í•  ê²ƒ*/) {
+						printf("â–£");
 					
 					}
 					else
@@ -377,12 +439,12 @@ void input()
 // each movement 
 void logic()
 {
-	Sleep(speed); // ¼Óµµ Á¶Àı¿ë º¯¼ö (±âº»°© : 200, Æ¯Á¤ ¾ÆÀÌÅÛÀ» ¸ÔÀ¸¸é »¡¶óÁö°Ô ÇÒ ¿¹Á¤)
+	Sleep(speed); // ì†ë„ ì¡°ì ˆìš© ë³€ìˆ˜ (ê¸°ë³¸ê°‘ : 200, íŠ¹ì • ì•„ì´í…œì„ ë¨¹ìœ¼ë©´ ë¹¨ë¼ì§€ê²Œ í•  ì˜ˆì •)
 	switch (flag) {
 	case 1:
-		// ¸Ó¸®ÀÇ ÁÂÇ¥¸¦ ¸ÕÀú º¯°æÇÏ¸é ¸Ó¸® ¹Ù·Î ´ÙÀ½ ¸öÅëÀÌ »ç¶óÁö´Â °ÍÀ» ¹ß°ß 
-		// -> ¸öÅëÀÇ ÁÂÇ¥¸¦ ¸ÕÀú º¯°æÇÑ ÀÌÈÄ, ¸Ó¸® ÁÂÇ¥º¯°æ 
-		// (¾îÂ÷ÇÇ ¸Ó¸®°¡ ÀÖ´Â ¹æÇâÀ¸·Î ÀÌµ¿ ¹× ¸Ó¸®°¡ º¸°í ÀÖ´ø ¹æÇâÀ¸·Î ¹æÇâ°ª º¯°æ)
+		// ë¨¸ë¦¬ì˜ ì¢Œí‘œë¥¼ ë¨¼ì € ë³€ê²½í•˜ë©´ ë¨¸ë¦¬ ë°”ë¡œ ë‹¤ìŒ ëª¸í†µì´ ì‚¬ë¼ì§€ëŠ” ê²ƒì„ ë°œê²¬ 
+		// -> ëª¸í†µì˜ ì¢Œí‘œë¥¼ ë¨¼ì € ë³€ê²½í•œ ì´í›„, ë¨¸ë¦¬ ì¢Œí‘œë³€ê²½ 
+		// (ì–´ì°¨í”¼ ë¨¸ë¦¬ê°€ ìˆëŠ” ë°©í–¥ìœ¼ë¡œ ì´ë™ ë° ë¨¸ë¦¬ê°€ ë³´ê³  ìˆë˜ ë°©í–¥ìœ¼ë¡œ ë°©í–¥ê°’ ë³€ê²½)
 		move_body(); 
 		head->y--;
 		break;
@@ -403,11 +465,11 @@ void logic()
 	}
 
 	// If the game is over 
-	if (head->x < 0 || head->x > height
-		|| head->y < 0 || head->y > width - 1)
+	if (head->x <= 0 || head->x >= height
+		|| head->y <= 0 || head->y >= width - 1)
 		gameover = 1;
 
-	if (round_snake(head->x, head->y) == 1) // ¸öÅë¿¡ ¸Ó¸®°¡ ´êÀ¸¸é Á¾·á
+	if (round_snake(head->x, head->y) == 1) // ëª¸í†µì— ë¨¸ë¦¬ê°€ ë‹¿ìœ¼ë©´ ì¢…ë£Œ
 		gameover = 1;
 
 
@@ -426,19 +488,19 @@ void logic()
 		}
 
 
-		insert_body(head, create_body(head->x, head->y, head->direction)); // fruitÀ» ¸Ô¾úÀ» ¶§ ¸öÅë Ãß°¡
+		insert_body(head, create_body(head->x, head->y, head->direction)); // fruitì„ ë¨¹ì—ˆì„ ë•Œ ëª¸í†µ ì¶”ê°€
 		body_length++;
 
 		score += 10;
 	}
 
 	/*
-	·¹º§¿¡ µû¶ó bomb»ı¼º ÇÏ´Â ±â´É ¸¸µé¾î¾ß ÇÔ
+	ë ˆë²¨ì— ë”°ë¼ bombìƒì„± í•˜ëŠ” ê¸°ëŠ¥ ë§Œë“¤ì–´ì•¼ í•¨
 	*/
 
 
 
-	// snake°¡ bomb¿¡ ´ê¾ÒÀ» ¶§
+	// snakeê°€ bombì— ë‹¿ì•˜ì„ ë•Œ
 	for (int i = 0; i < 4; i++) {
 		if ((head->x == bomb[i].x && head->y == bomb[i].y) /*|| (round_snake(bombx, bomby) == 1)*/) {
 			change_score(2, -50);
@@ -446,7 +508,7 @@ void logic()
 	}
 
 
-	// snake°¡ event¿¡ ´ê¾ÒÀ» ¶§
+	// snakeê°€ eventì— ë‹¿ì•˜ì„ ë•Œ
 	if ((head->x == mysteryx && head->y == mysteryy) /*|| (round_snake(eventx, eventy) == 1)*/) {
 
 		// event
@@ -464,15 +526,15 @@ void logic()
 		
 		int effect = rand() % 3;
 		switch (effect) {
-		case 0: // Á¡¼ö Áõ°¡
+		case 0: // ì ìˆ˜ ì¦ê°€
 			change_score(1, random_num(50));
 			break;
 
-		case 1: // Á¡¼ö °¨¼Ò
+		case 1: // ì ìˆ˜ ê°ì†Œ
 			change_score(1, -random_num(50));
 			break;
 
-		case 2: // ¸öÅë ±æÀÌ Áõ°¡
+		case 2: // ëª¸í†µ ê¸¸ì´ ì¦ê°€
 			body_add(random_num(5));
 			break;
 		}
@@ -489,7 +551,7 @@ void logic()
 
 
 
-// µ¿Àû ÇÒ´çµÈ ¸ğµç body(node) µ¿Àû ÇÒ´ç ÇØÁ¦
+// ë™ì  í• ë‹¹ëœ ëª¨ë“  body(node) ë™ì  í• ë‹¹ í•´ì œ
 void free_snake(body* node) {
 	body* cur = node;
 	body* next;
@@ -525,5 +587,5 @@ void main()
 	}
 
 
-	free_snake(head); // snake µ¿ÀûÇÒ´ç ÇØÁ¦
+	free_snake(head); // snake ë™ì í• ë‹¹ í•´ì œ
 }
