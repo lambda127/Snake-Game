@@ -1,0 +1,6 @@
+﻿  snake_main.c
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(233,18): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(249,13): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(250,13): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(513,8): warning C4244: '함수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Snake_Game.vcxproj -> C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\x64\Debug\Snake_Game.exe
