@@ -27,13 +27,16 @@ struct BOMB_BOX
 typedef struct BOMB_BOX BOMB;
 
 
-enum difficulties {
+
+
+enum Speed {
 	lvl1 = 300,
 	lvl2 = 250,
 	lvl3 = 175,
 	lvl4 = 120,
 	lvl5 = 80
 };
+
 
 
 body * head = NULL; // 머리 선언
@@ -47,9 +50,10 @@ int gameover, score;
 int fruitx, fruity, flag;
 int mysteryx, mysteryy;  // mystery -> '?'
 BOMB bomb[4]; // bomb -> ▣
-int mystery_cnt = 0, bomb_cnt = 0;// mystery와 bomb의 개수
+int mystery_cnt = 0, bomb_cnt = 1;// mystery와 bomb의 개수
 int body_length = 1;
-int speed = 200;
+int speed = lvl1;
+int st_level = 0;
 int level = 1;
 
 
@@ -59,14 +63,14 @@ int level = 1;
 
 // 레벨 선택
 int select_level() {
-	enum difficulties speed;
+	enum Speed speed = lvl1;
 	int sel = 0;
 	char answer[sizeof("당연하지렁")];
 
 	printf("(∩^o^)⊃━☆ 안녕하지렁~ 나는 지렁이지렁!! \n");
 	printf("내가 성장할 수 있도록 잘 도와줄 수 있지렁?(당연하지렁 or 아니지렁)\n");
 	scanf_s("%s", answer, sizeof("당연하지렁"));
-	if (strcmp(answer, "당연하지렁") == 0) {
+	if (strcmp(answer, "y") == 0) {
 		printf("좋았지렁!! 그럼 이제 원하는 레벨을 말해지렁!");
 	}
 	else {
@@ -77,22 +81,27 @@ int select_level() {
 
 	switch(sel) {
 	case 1:
+		st_level = 1;
 		level = 1;
 		speed = lvl1;
 		break;
 	case 2:
+		st_level = 2;
 		level = 2;
 		speed = lvl2;
 		break;
 	case 3:
+		st_level = 3;
 		level = 3;
 		speed = lvl3;
 		break;
 	case 4:
+		st_level = 4;
 		level = 4;
 		speed = lvl4;
 		break;
 	case 5:
+		st_level = 5;
 		level = 5;
 		speed = lvl5;
 		break;
@@ -203,8 +212,7 @@ void move_body() {
 
 
 
-// **** 삭제 예정 ****
-// 1 -> 0~149 사이의 값을 speed에서 뺌 -> 속도 증가
+/*// 1 -> 0~149 사이의 값을 speed에서 뺌 -> 속도 증가
 // 2 -> 0~99 사이의 값을 speed에 더함 -> 속도 감소
 void rand_speed(int num) {
 	if (num == 1)
@@ -213,6 +221,8 @@ void rand_speed(int num) {
 	if (num == 2)
 		speed += rand() % 100;
 }
+*/
+
 
 // 1 -> 미스테리 박스 점수 변동 기능에 사용, 매개 변수로 받은 change 값을 더 함(change가 음수인 경우에 점수가 0 이하이면 점수 변화 X (2024.11.23 수정)
 // 2 -> 폭탄 박스를 위한 기능, 현재 점수와는 상관 없이 무조건 점수를 변화 시킴
@@ -297,12 +307,12 @@ void setup()
 	// fruit
 	fruitx = 0;
 	while (fruitx == 0) {
-		fruitx = rand() % 20 + 1;
+		fruitx = rand() % 21;
 	}
 
 	fruity = 0;
 	while (fruity == 0) {
-		fruity = rand() % 20 + 1;
+		fruity = rand() % 21;
 	}
 
 
@@ -318,8 +328,8 @@ void setup()
 		||(bomb[0].x == fruitx  && bomb[0].y == fruity)
 		||(bomb[0].x == mysteryx && bomb[0].y == mysteryy)) {
 
-		bomb[0].x = rand() % 20 + 1;
-		bomb[0].y = rand() % 20 + 1;
+		bomb[0].x = rand() % 21;
+		bomb[0].y = rand() % 21;
 	}
 
 	
@@ -330,8 +340,8 @@ void setup()
 	while (mysteryx == 0 || mysteryy == 0
 		|| (mysteryx == fruitx && mysteryy == fruity)
 		|| (mysteryx == bomb[0].x && mysteryy == bomb[0].y)) {
-		mysteryx = rand() % 20 + 1;
-		mysteryy = rand() % 20  +1;
+		mysteryx = rand() % 21;
+		mysteryy = rand() % 21;
 	}
 
 	
@@ -370,14 +380,8 @@ void draw()
 					|| i == bomb[2].x && j == bomb[2].y
 					|| i == bomb[3].x && j == bomb[3].y) // bomb의 모든 좌표 확인
 				{
-					if (bomb_cnt == 0/*일단 임시로 0개 이면 만들게 해 둠, 레벨에 따라 생길 수 있게 할 것*/) {
-						printf("▣");
+					printf("▣");
 					
-					}
-					else
-					{
-						printf(" ");
-					}
 				}
 				else if (i == mysteryx && j == mysteryy )
 				{
@@ -406,8 +410,10 @@ void draw()
 
 	// Print the score after the 
 	// game ends 
-	printf("score = %d | body_length = %d |", score, body_length);
-	printf("\n");
+	printf("score = %d | body_length = %d |\n", score, body_length);
+	printf("speed = %d | level = %d |\n", speed, level);
+	printf("fx = % d | fy = % d | ", fruitx, fruity);
+
 	printf("press X to quit the game\n");
 }
 
@@ -439,7 +445,111 @@ void input()
 // each movement 
 void logic()
 {
-	Sleep(speed); // 속도 조절용 변수 (기본갑 : 200, 특정 아이템을 먹으면 빨라지게 할 예정)
+	// 점수가 50이 증가할 때마다 레벨 +1
+	if (score > 50) {
+		if (st_level == 1) level = 2;
+		if (st_level == 2) level = 3;
+		if (st_level == 3) level = 4;
+		if (st_level == 4) level = 5;
+	}
+
+	if (score > 100) {
+		if (st_level == 1) level = 3;
+		if (st_level == 2) level = 4;
+		if (st_level == 3) level = 5;
+	}
+
+	if (score > 150) {
+		if (st_level == 1) level = 4;
+		if (st_level == 2) level = 5;
+	}
+
+	if (score > 200) {
+		if (st_level == 1) level = 5;
+	}
+	
+
+
+
+	// 레벨에 따라 속도, bomb 개수 설정, level3, level5에서 bomb가 새로 생기면 (x, y 좌표가 NULL일 때) 좌표 설정
+	switch(level) {
+	default:
+		speed = lvl1;
+		bomb_cnt = 1;
+		break;
+
+	case 2:
+		speed = lvl2;
+		break;
+
+	case 3:
+		speed = lvl3;
+		bomb_cnt = 2;
+		if (bomb[1].x == NULL && bomb[1].y == NULL) {
+			bomb[1].x = 0;
+			bomb[1].y = 0;
+			while (bomb[1].x == 0 || bomb[1].y == 0
+				|| (bomb[1].x == fruitx && bomb[1].y == fruity)
+				|| (bomb[1].x == mysteryx && bomb[1].y == mysteryy)
+				|| (bomb[1].x == fruitx && bomb[1].y == fruity)
+				|| (bomb[1].x == bomb[0].x && bomb[1].y == bomb[0].y)
+				|| (round_snake(bomb[1].x, bomb[1].y) == 1)) {
+
+				bomb[1].x = rand() % 21;
+				bomb[1].y = rand() % 21;
+			}
+		}
+		break;
+
+	case 4:
+		speed = lvl4;
+		break;
+
+	case 5:
+		speed = lvl5;
+		bomb_cnt = 4;
+		
+	
+		if (bomb[2].x == NULL && bomb[2].y == NULL) {
+			bomb[2].x = 0;
+			bomb[2].y = 0;
+			while (bomb[2].x == 0 || bomb[2].y == 0
+				|| (bomb[2].x == fruitx && bomb[2].y == fruity)
+				|| (bomb[2].x == mysteryx && bomb[2].y == mysteryy)
+				|| (bomb[2].x == fruitx && bomb[2].y == fruity)
+				|| (bomb[2].x == bomb[0].x && bomb[2].y == bomb[0].y)
+				|| (bomb[2].x == bomb[1].x && bomb[2].y == bomb[1].y)
+				|| (round_snake(bomb[1].x, bomb[1].y) == 1)) {
+
+				bomb[2].x = rand() % 21;
+				bomb[2].y = rand() % 21;
+			}
+		}
+
+		if (bomb[2].x == NULL && bomb[2].y == NULL){
+			bomb[3].x = 0;
+			bomb[3].y = 0;
+			while (bomb[3].x == 0 || bomb[3].y == 0
+				|| (bomb[3].x == fruitx && bomb[3].y == fruity)
+				|| (bomb[3].x == mysteryx && bomb[3].y == mysteryy)
+				|| (bomb[3].x == fruitx && bomb[3].y == fruity)
+				|| (bomb[3].x == bomb[0].x && bomb[3].y == bomb[0].y)
+				|| (bomb[3].x == bomb[1].x && bomb[3].y == bomb[1].y)
+				|| (bomb[3].x == bomb[2].x && bomb[3].y == bomb[2].y)
+				|| (round_snake(bomb[1].x, bomb[1].y) == 1)) {
+
+				bomb[3].x = rand() % 21;
+				bomb[3].y = rand() % 21;
+			}
+		}
+		break;
+
+	}
+
+
+
+
+	Sleep(speed); // 속도 조절용 변수 speed (기본값 : lvl1 (300), 레벨에 따라 속도가 더 빨라진다.)
 	switch (flag) {
 	case 1:
 		// 머리의 좌표를 먼저 변경하면 머리 바로 다음 몸통이 사라지는 것을 발견 
@@ -465,7 +575,7 @@ void logic()
 	}
 
 	// If the game is over 
-	if (head->x <= 0 || head->x >= height
+	if (head->x <= 0 || head->x >= height-1
 		|| head->y <= 0 || head->y >= width - 1)
 		gameover = 1;
 
@@ -479,12 +589,12 @@ void logic()
 
 		fruitx = 0;
 		while (fruitx == 0 ) {
-			fruitx = rand() % 20;
+			fruitx = rand() % 21;
 		}
 
 		fruity = 0;
 		while (fruity == 0) {
-			fruity = rand() % 20;
+			fruity = rand() % 21;
 		}
 
 
@@ -494,16 +604,23 @@ void logic()
 		score += 10;
 	}
 
-	/*
-	레벨에 따라 bomb생성 하는 기능 만들어야 함
-	*/
-
 
 
 	// snake가 bomb에 닿았을 때
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < bomb_cnt; i++) {
 		if ((head->x == bomb[i].x && head->y == bomb[i].y) /*|| (round_snake(bombx, bomby) == 1)*/) {
 			change_score(2, -50);
+
+			bomb[i].x = 0;
+			bomb[i].y = 0;
+			while (bomb[i].x == 0 || bomb[i].y == 0
+				|| (bomb[i].x == fruitx && bomb[i].y == fruity)
+				|| (bomb[i].x == mysteryx && bomb[i].y == mysteryy)
+				|| (round_snake(bomb[i].x, bomb[i].y) == 1)) {
+
+				bomb[i].x = rand() % 21;
+				bomb[i].y = rand() % 21;
+			}
 		}
 	}
 
@@ -515,13 +632,14 @@ void logic()
 		mysteryx = 0;
 		mysteryy = 0;
 		
-		for (int i = 0; i < 4; i++) {
-			while (mysteryx == 0 || mysteryy == 0
-				|| (mysteryx == fruitx && mysteryy == fruity)
-				|| (mysteryx == bomb[i].x && mysteryy == bomb[i].y)) {
-				mysteryx = rand() % 20;
-				mysteryy = rand() % 20;
-			}
+		while (mysteryx == 0 || mysteryy == 0
+			|| (mysteryx == fruitx && mysteryy == fruity)
+			|| (mysteryx == bomb[0].x && mysteryy == bomb[0].y)
+			|| (mysteryx == bomb[1].x && mysteryy == bomb[1].y)
+			|| (mysteryx == bomb[2].x && mysteryy == bomb[2].y)
+			|| (mysteryx == bomb[3].x && mysteryy == bomb[3].y)) {
+			mysteryx = rand() % 21;
+			mysteryy = rand() % 21;
 		}
 		
 		int effect = rand() % 3;
