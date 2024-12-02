@@ -15,6 +15,7 @@
 struct BODY
 {
 	int x, y, direction; //direction : 1 -> -y, 2 -> -x, 3 -> +y, 4-> +x
+	int body_no;
 	struct BODY* next;
 };
 typedef struct BODY body; // 타입 정의
@@ -47,15 +48,23 @@ body* cut_bodies = NULL;
 // 연결리스트 이용으로  기존에 있던 변수 x, y 필요 없어짐에 따라 제거
 int i, j, height = 22, width = 22;  
 int gameover, score;
+
 int fruitx, fruity, flag;
 int mysteryx, mysteryy;  // mystery -> '?'
+int trapx, trapy;
+
 BOMB bomb[4]; // bomb -> ▣
+
 int mystery_cnt = 0, bomb_cnt = 1;// mystery와 bomb의 개수
 int body_length = 1;
 int speed = lvl1;
 int st_level = 0;
 int level = 1;
 
+char player[20] = "Anonym";
+
+char best_player[20];
+int highest_score = 0;
 
 
 
@@ -115,7 +124,7 @@ int select_level() {
 
 
 // 몸통 생성, 머리 혹은 앞 몸통의 좌표, 보고 있는 방향을 받아 그 다음 위치에 좌표 설정, 바라보는 방향 설정
-body* create_body(int x, int y, int direction) {
+body* create_body(int x, int y, int direction, int body_no) {
 
 	body* new_body = (body*)malloc(sizeof(body));
 
@@ -140,6 +149,7 @@ body* create_body(int x, int y, int direction) {
 	}
 	new_body->next = NULL;
 	new_body->direction = direction;
+	new_body->body_no = body_no;
 
 	return new_body;
 }
@@ -161,8 +171,9 @@ void insert_body(body * st, body* new_body) {
 }
 
 // 좌표를 받아 해당좌표에 몸통이 있는지 확인하는 함수
-int round_snake(int x, int y) {
-	body* cur = head->next;
+int round_snake(body* st, int x, int y) {
+	body* cur = st == head ? st->next : st;
+
 
 	while (cur != NULL) {
 		if (x == cur->x && y == cur->y) {
@@ -255,8 +266,8 @@ int random_num(int r) {
 //  1~5 사이 개수의 몸통 추가
 void body_add(int r) {
 	for (int i = 0; i < r; i++) {
-		insert_body(head, create_body(head->x, head->y, head->direction));
 		body_length++;
+		insert_body(head, create_body(head->x, head->y, head->direction, body_length));
 	}
 
 }
@@ -292,6 +303,8 @@ void setup()
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo); // 설정 적용
 
 
+	read_record();
+
 	gameover = 0;
 
 	head = (body*)malloc(sizeof(body));
@@ -301,7 +314,17 @@ void setup()
 	head->y = width / 2;
 	head->next = NULL;
 	head->direction = NULL;
+	head->body_no = 1;
 
+
+	cut_bodies = (body*)malloc(sizeof(body));
+
+	// Stores height and width 
+	cut_bodies->x = NULL;
+	cut_bodies->y = NULL;
+	cut_bodies->next = NULL;
+	cut_bodies->direction = NULL;
+	cut_bodies->body_no = NULL;
 
 
 	// fruit
@@ -316,6 +339,37 @@ void setup()
 	}
 
 
+
+
+	// event
+	mysteryx = 0;
+	mysteryy = 0;
+	while (mysteryx == 0 || mysteryy == 0
+		|| (mysteryx == fruitx && mysteryy == fruity)) {
+		mysteryx = rand() % 21;
+		mysteryy = rand() % 21;
+	}
+
+
+
+
+
+	// trap
+	trapx = 0;
+	trapy = 0;
+
+	while (trapx == 0 || trapy == 0 
+		|| (trapx == fruitx && trapy == fruity)
+		|| (trapx == mysteryx && trapy == mysteryy)) {
+		trapx = rand() % 21;
+		trapy = rand() % 21;
+	}
+
+
+
+
+
+
 	// bomb
 	for (int i = 0; i < 4; i++) {
 		bomb[i].x = NULL;
@@ -326,7 +380,8 @@ void setup()
 	bomb[0].y = 0;
 	while (bomb[0].x == 0 || bomb[0].y == 0
 		||(bomb[0].x == fruitx  && bomb[0].y == fruity)
-		||(bomb[0].x == mysteryx && bomb[0].y == mysteryy)) {
+		||(bomb[0].x == mysteryx && bomb[0].y == mysteryy)
+		|| (bomb[0].x == trapx && bomb[0].y == trapy)) {
 
 		bomb[0].x = rand() % 21;
 		bomb[0].y = rand() % 21;
@@ -334,17 +389,6 @@ void setup()
 
 	
 
-	// event
-	mysteryx = 0;
-	mysteryy = 0;
-	while (mysteryx == 0 || mysteryy == 0
-		|| (mysteryx == fruitx && mysteryy == fruity)
-		|| (mysteryx == bomb[0].x && mysteryy == bomb[0].y)) {
-		mysteryx = rand() % 21;
-		mysteryy = rand() % 21;
-	}
-
-	
 
 	score = 0;
 }
@@ -366,7 +410,7 @@ void draw()
 				if (i == head->x && j == head->y) {
 					printf("O");
 				}
-				else if (round_snake(i, j) == 1) // 영역을 그리고 있는 위치에 몸통이 있는지 확인 -> 존재 O => 'o'출력
+				else if (round_snake(head, i, j) == 1 || round_snake(cut_bodies, i, j) == 1) // 영역을 그리고 있는 위치에 몸통이 있는지 확인 -> 존재 O => 'o'출력
 				{
 					printf("o");
 				}
@@ -397,6 +441,11 @@ void draw()
 						printf(" ");
 					}
 				}
+				else if (i == trapx && j == trapy)
+				{
+					printf("@");//기호 바꿔도 댐
+
+				}
 				else
 				{
 					printf(" ");
@@ -412,7 +461,8 @@ void draw()
 	// game ends 
 	printf("score = %d | body_length = %d |\n", score, body_length);
 	printf("speed = %d | level = %d |\n", speed, level);
-	printf("fx = % d | fy = % d | ", fruitx, fruity);
+	printf("fx = %d | fy = %d | ", fruitx, fruity);
+	printf("fx = %s | fy = %d | ", best_player, highest_score);
 
 	printf("press X to quit the game\n");
 }
@@ -493,7 +543,7 @@ void logic()
 				|| (bomb[1].x == mysteryx && bomb[1].y == mysteryy)
 				|| (bomb[1].x == fruitx && bomb[1].y == fruity)
 				|| (bomb[1].x == bomb[0].x && bomb[1].y == bomb[0].y)
-				|| (round_snake(bomb[1].x, bomb[1].y) == 1)) {
+				|| (round_snake(head, bomb[1].x, bomb[1].y) == 1)) {
 
 				bomb[1].x = rand() % 21;
 				bomb[1].y = rand() % 21;
@@ -519,7 +569,7 @@ void logic()
 				|| (bomb[2].x == fruitx && bomb[2].y == fruity)
 				|| (bomb[2].x == bomb[0].x && bomb[2].y == bomb[0].y)
 				|| (bomb[2].x == bomb[1].x && bomb[2].y == bomb[1].y)
-				|| (round_snake(bomb[1].x, bomb[1].y) == 1)) {
+				|| (round_snake(head, bomb[1].x, bomb[1].y) == 1)) {
 
 				bomb[2].x = rand() % 21;
 				bomb[2].y = rand() % 21;
@@ -536,7 +586,7 @@ void logic()
 				|| (bomb[3].x == bomb[0].x && bomb[3].y == bomb[0].y)
 				|| (bomb[3].x == bomb[1].x && bomb[3].y == bomb[1].y)
 				|| (bomb[3].x == bomb[2].x && bomb[3].y == bomb[2].y)
-				|| (round_snake(bomb[1].x, bomb[1].y) == 1)) {
+				|| (round_snake(head, bomb[1].x, bomb[1].y) == 1)) {
 
 				bomb[3].x = rand() % 21;
 				bomb[3].y = rand() % 21;
@@ -579,7 +629,7 @@ void logic()
 		|| head->y <= 0 || head->y >= width - 1)
 		gameover = 1;
 
-	if (round_snake(head->x, head->y) == 1) // 몸통에 머리가 닿으면 종료
+	if (round_snake(head, head->x, head->y) == 1) // 몸통에 머리가 닿으면 종료
 		gameover = 1;
 
 
@@ -598,8 +648,9 @@ void logic()
 		}
 
 
-		insert_body(head, create_body(head->x, head->y, head->direction)); // fruit을 먹었을 때 몸통 추가
 		body_length++;
+		insert_body(head, create_body(head->x, head->y, head->direction, body_length)); // fruit을 먹었을 때 몸통 추가
+		
 
 		score += 10;
 	}
@@ -616,7 +667,7 @@ void logic()
 			while (bomb[i].x == 0 || bomb[i].y == 0
 				|| (bomb[i].x == fruitx && bomb[i].y == fruity)
 				|| (bomb[i].x == mysteryx && bomb[i].y == mysteryy)
-				|| (round_snake(bomb[i].x, bomb[i].y) == 1)) {
+				|| (round_snake(head, bomb[i].x, bomb[i].y) == 1)) {
 
 				bomb[i].x = rand() % 21;
 				bomb[i].y = rand() % 21;
@@ -625,15 +676,16 @@ void logic()
 	}
 
 
-	// snake가 event에 닿았을 때
+	// snake가 event(mystery)에 닿았을 때
 	if ((head->x == mysteryx && head->y == mysteryy) /*|| (round_snake(eventx, eventy) == 1)*/) {
 
-		// event
+		// event(mystery)
 		mysteryx = 0;
 		mysteryy = 0;
 		
 		while (mysteryx == 0 || mysteryy == 0
 			|| (mysteryx == fruitx && mysteryy == fruity)
+			|| (mysteryx == trapx && mysteryy == trapy)
 			|| (mysteryx == bomb[0].x && mysteryy == bomb[0].y)
 			|| (mysteryx == bomb[1].x && mysteryy == bomb[1].y)
 			|| (mysteryx == bomb[2].x && mysteryy == bomb[2].y)
@@ -661,6 +713,52 @@ void logic()
 		mystery_cnt--;
 
 	}
+
+
+
+	// snake가 trap에 닿았을 때
+	if ((head->x == trapx && head->y == trapy)) {
+		int cut_num = body_length == 1 ? 0 : random_num(body_length-1); // 1~(몸통길이-1) 중 랜덤한 수 만큼 절단 (머리 제외)
+		
+		body* prev = head;
+		body* cur = head->next;
+
+
+		trapx = 0;
+		trapy = 0;
+
+		while (trapx == 0 || trapy == 0
+			|| (trapx == fruitx && trapy == fruity)
+			|| (trapx == mysteryx && trapy == mysteryy)
+			|| (mysteryx == bomb[0].x && mysteryy == bomb[0].y)
+			|| (mysteryx == bomb[1].x && mysteryy == bomb[1].y)
+			|| (mysteryx == bomb[2].x && mysteryy == bomb[2].y)
+			|| (mysteryx == bomb[3].x && mysteryy == bomb[3].y)) {
+			trapx = rand() % 21;
+			trapy = rand() % 21;
+		}
+
+
+
+		while (cur != NULL) {
+			if (cur->body_no > body_length - cut_num) {
+				prev->next = NULL;
+				find_tail(cut_bodies)->next = cur;
+				
+				break;
+			}
+
+			prev = cur;
+			cur = cur->next;
+		}
+
+
+	}
+
+
+
+	// snake가 끊어진 몸통에 닿았을 때
+
 }
 
 
@@ -684,7 +782,31 @@ void free_snake(body* node) {
 
 
 
+int read_record() {
+	FILE* fp = NULL;
 
+	fopen_s(&fp, "record.txt", "rt");
+
+	fscanf_s(fp, "%s : %d ", best_player, 20, &highest_score);
+
+	fclose(fp);
+
+	return 0;
+}
+
+
+int write_record() {
+	if (score > highest_score) {
+		FILE* fp = NULL;
+
+		fopen_s(&fp, "record.txt", "wt");
+
+		fprintf(fp, "                                                                                                       \n");
+		fprintf(fp, "%s : %d \n", player, 20, score);
+
+		fclose(fp);
+	}
+}
 
 
 
@@ -704,6 +826,7 @@ void main()
 		logic();
 	}
 
-
+	write_record();
 	free_snake(head); // snake 동적할당 해제
+	free_snake(cut_bodies);
 }

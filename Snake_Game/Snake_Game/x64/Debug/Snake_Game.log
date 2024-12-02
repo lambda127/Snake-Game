@@ -1,16 +1,26 @@
 ﻿  snake_main.c
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(72,10): warning C4477: 'scanf_s' : 서식 문자열 '%s'에 'unsigned int' 형식의 인수가 필요하지만 variadic 인수 2의 형식이 'size_t'입니다.
-      C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(72,10):
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(81,10): warning C4477: 'scanf_s' : 서식 문자열 '%s'에 'unsigned int' 형식의 인수가 필요하지만 variadic 인수 2의 형식이 'size_t'입니다.
+      C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(81,10):
       이 인수는 버퍼 크기로 사용됩니다.
   
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(302,18): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(320,13): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(321,13): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(485,17): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(485,38): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(510,17): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(510,38): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(526,17): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(526,38): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(690,8): warning C4244: '함수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(306,2): warning C4013: 'read_record'이(가) 정의되지 않았습니다. extern은 int형을 반환하는 것으로 간주합니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(316,18): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(323,16): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(324,16): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(326,24): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(327,22): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(375,13): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(376,13): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(538,17): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(538,38): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(563,17): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(563,38): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(579,17): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(579,38): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(800,41): warning C4474: 'fprintf' : 서식 문자열에 전달된 인수가 너무 많습니다.
+      C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(800,41):
+      자리 표시자 및 해당 매개 변수에는 variadic 인수가 2개 필요하지만 3개가 제공되었습니다.
+  
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(810,8): warning C4244: '함수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(804,1): warning C4716: 'write_record': 값을 반환해야 합니다.
   Snake_Game.vcxproj -> C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\x64\Debug\Snake_Game.exe
