@@ -17,10 +17,10 @@ C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(563,
 C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(563,38): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
 C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(579,17): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
 C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(579,38): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(800,41): warning C4474: 'fprintf' : 서식 문자열에 전달된 인수가 너무 많습니다.
-      C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(800,41):
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(807,41): warning C4474: 'fprintf' : 서식 문자열에 전달된 인수가 너무 많습니다.
+      C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(807,41):
       자리 표시자 및 해당 매개 변수에는 variadic 인수가 2개 필요하지만 3개가 제공되었습니다.
   
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(810,8): warning C4244: '함수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(804,1): warning C4716: 'write_record': 값을 반환해야 합니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(817,8): warning C4244: '함수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(811,1): warning C4716: 'write_record': 값을 반환해야 합니다.
   Snake_Game.vcxproj -> C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\x64\Debug\Snake_Game.exe

@@ -758,7 +758,9 @@ void logic()
 
 
 	// snake가 끊어진 몸통에 닿았을 때
-
+	if (round_snake(cut_bodies, head->x, head->y) == 1) {
+		gameover = 1;
+	}
 }
 
 
