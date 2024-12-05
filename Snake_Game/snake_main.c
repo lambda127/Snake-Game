@@ -11,7 +11,6 @@
 #include <wchar.h>
 
 
-
 struct BODY
 {
 	int x, y, direction; //direction : 1 -> -y, 2 -> -x, 3 -> +y, 4-> +x
@@ -291,9 +290,11 @@ void gotoxy(int x, int y){
 void setup()
 {
 
+	
 	// 난이도 선택
 	speed = select_level();
 	system("cls");
+
 
 
 	// 커서 세팅
@@ -302,6 +303,8 @@ void setup()
 	cursorInfo.bVisible = FALSE; // 커서 Visible TRUE(보임) FALSE(숨김)
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo); // 설정 적용
 
+	
+	
 
 	read_record();
 
@@ -401,10 +404,17 @@ void draw()
 
 	for (i = 0; i < height; i++) {
 		for (j = 0; j < width; j++) {
-			if (i == 0 || i == width - 1
+			if (i == 0 || i == height - 1
 				|| j == 0
-				|| j == height - 1) {
+				|| j == width - 1) {
 				printf("#");
+				if (i == 0 && j == width - 1) printf(" Best player\t: %s\t ", best_player); 
+				if (i == 1 && j == width - 1) printf(" Highest Score\t: %d\t ",  highest_score);
+
+				if (i == 3 && j == width - 1) printf(" Player\t\t: %s\t ", player);
+				if (i == 4 && j == width - 1) printf(" Score\t\t: %d\t ", score);
+				if (i == 5 && j == width - 1) printf(" Level\t\t: %d\t ", level);
+
 			}
 			else {
 				if (i == head->x && j == head->y) {
@@ -459,10 +469,6 @@ void draw()
 
 	// Print the score after the 
 	// game ends 
-	printf("score = %d | body_length = %d |\n", score, body_length);
-	printf("speed = %d | level = %d |\n", speed, level);
-	printf("fx = %d | fy = %d | ", fruitx, fruity);
-	printf("fx = %s | fy = %d | ", best_player, highest_score);
 
 	printf("press X to quit the game\n");
 }
