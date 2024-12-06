@@ -78,8 +78,11 @@ int select_level() {
 	printf("(∩^o^)⊃━☆ 안녕하지렁~ 나는 지렁이지렁!! \n");
 	printf("내가 성장할 수 있도록 잘 도와줄 수 있지렁?(당연하지렁 or 아니지렁)\n");
 	scanf_s("%s", answer, sizeof("당연하지렁"));
-	if (strcmp(answer, "y") == 0) {
-		printf("좋았지렁!! 그럼 이제 원하는 레벨을 말해지렁!");
+	if (strcmp(answer, "당연하지렁") == 0) {
+		printf("좋았지렁!! 그럼 이제 이름을 말해지렁!");
+		scanf_s("%s", player, 20);
+		printf("%s !! 알겠어 잘 기억하겠지렁.>,<", player);
+		printf("그럼 이제 원하는 레벨을 말해지렁!");
 	}
 	else {
 		printf("알겠지렁..그럼 아쉽지만 여기서 종료하겠지렁..");
@@ -810,7 +813,7 @@ int write_record() {
 		fopen_s(&fp, "record.txt", "wt");
 
 		fprintf(fp, "                                                                                                       \n");
-		fprintf(fp, "%s : %d \n", player, 20, score);
+		fprintf(fp, "%s : %d \n", player, score);
 
 		fclose(fp);
 	}
