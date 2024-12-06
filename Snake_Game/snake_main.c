@@ -70,6 +70,127 @@ int highest_score = 0;
 
 
 // 레벨 선택
+int select_level();
+
+
+
+
+
+void draw_dlg_box(int box_width, int box_height);
+
+
+void print_line(int x, int y, int width, int height,  char line[]);
+
+
+
+
+
+// 몸통 생성, 머리 혹은 앞 몸통의 좌표, 보고 있는 방향을 받아 그 다음 위치에 좌표 설정, 바라보는 방향 설정
+body* create_body(int x, int y, int direction, int body_no);
+
+// 마지막 몸통(꼬리) 탐색
+body* find_tail(body* st);
+
+// 생성한 몸통을 가장 마지막에 연결
+void insert_body(body* st, body* new_body);
+
+// 좌표를 받아 해당좌표에 몸통이 있는지 확인하는 함수
+int round_snake(body* st, int x, int y);
+
+
+
+
+
+
+// 머리를 제외한 몸통을 움직이는 기능
+// 앞 몸통의 좌표 저장(prev_x, prev_y), 자신의 좌표 임시 저장(temp_x, temp_y), 자신에게 앞 몸통 좌표 저장, 자신의 좌표 였던 좌표 prev_x, prevy애 저장
+void move_body();
+
+
+
+
+
+
+
+// 1 -> 미스테리 박스 점수 변동 기능에 사용, 매개 변수로 받은 change 값을 더 함(change가 음수인 경우에 점수가 0 이하이면 점수 변화 X (2024.11.23 수정)
+// 2 -> 폭탄 박스를 위한 기능, 현재 점수와는 상관 없이 무조건 점수를 변화 시킴
+void change_score(int num, int change);
+
+
+// 1~r 사이의 랜덤한 값을 반환
+int random_num(int r);
+
+
+
+//  1~5 사이 개수의 몸통 추가
+void body_add(int r);
+
+
+
+
+
+// 커서 위치 이동
+void gotoxy(int x, int y);
+
+
+// Function to generate the fruit 
+// within the boundary 
+void setup();
+
+// Function to draw the boundaries 
+void draw();
+
+// Function to take the input 
+void input();
+
+// Function for the logic behind 
+// each movement 
+void logic();
+
+
+
+
+
+
+
+// 동적 할당된 모든 body(node) 동적 할당 해제
+void free_snake(body* node);
+
+
+
+
+int read_record();
+
+
+int write_record();
+
+
+
+void main()
+{
+	srand(time(NULL));
+
+	// Generate boundary 
+	setup();
+
+	// Until the game is over 
+	while (!gameover) {
+
+		// Function Call 
+		draw();
+		input();
+		logic();
+	}
+
+	write_record();
+	free_snake(head); // snake 동적할당 해제
+	free_snake(cut_bodies);
+}
+
+
+
+
+// 레벨 선택
 int select_level() {
 	enum Speed speed = lvl1;
 	int sel = 0;
@@ -77,7 +198,7 @@ int select_level() {
 
 	printf("(∩^o^)⊃━☆ 안녕하지렁~ 나는 지렁이지렁!! \n");
 	printf("내가 성장할 수 있도록 잘 도와줄 수 있지렁?(당연하지렁 or 아니지렁)\n");
-	scanf_s("%s", answer, sizeof("당연하지렁"));
+	scanf_s("%s", answer, (int)sizeof("당연하지렁"));
 	if (strcmp(answer, "당연하지렁") == 0) {
 		printf("좋았지렁!! 그럼 이제 이름을 말해지렁!");
 		scanf_s("%s", player, 20);
@@ -90,7 +211,7 @@ int select_level() {
 	}
 	scanf_s("%d", &sel);
 
-	switch(sel) {
+	switch (sel) {
 	case 1:
 		st_level = 1;
 		level = 1;
@@ -125,6 +246,43 @@ int select_level() {
 
 
 
+void draw_dlg_box(int box_width, int box_height) {
+	
+	for (int i = 0; i < box_height; i++) {
+		for (int j = 0; j < box_width; j++) {
+			if (i == 0 && j == 0) printf("┏");
+			else if (i == 0 && j == box_width - 1) printf("┓");
+			else if (i == box_height - 1 && j == 0) printf("┗");
+			else if (i == box_height - 1 && j == box_width - 1) printf("┛");
+			else if (j == 0 || j == box_width - 1) printf("┃");
+			else if (i == 0 || i == box_height - 1) printf("━");
+			else printf(" ");
+
+		}
+		printf("\n");
+	}
+
+
+}
+
+
+// 
+void print_line( int width, int height, char line[]) {
+	gotoxy(0, 0);
+	draw_dlg_box(width, height);
+
+	gotoxy(2, 2); // 커서 이동 (가로, 세로)
+	printf("%s", line);
+}
+
+
+
+
+
+
+
+
+
 // 몸통 생성, 머리 혹은 앞 몸통의 좌표, 보고 있는 방향을 받아 그 다음 위치에 좌표 설정, 바라보는 방향 설정
 body* create_body(int x, int y, int direction, int body_no) {
 
@@ -146,7 +304,7 @@ body* create_body(int x, int y, int direction, int body_no) {
 	case 4:
 		new_body->x = x + 1;
 		new_body->y = y;
-		
+
 		break;
 	}
 	new_body->next = NULL;
@@ -167,7 +325,7 @@ body* find_tail(body* st) {
 }
 
 // 생성한 몸통을 가장 마지막에 연결
-void insert_body(body * st, body* new_body) {
+void insert_body(body* st, body* new_body) {
 	body* tail = find_tail(st);
 	tail->next = new_body;
 }
@@ -181,10 +339,10 @@ int round_snake(body* st, int x, int y) {
 		if (x == cur->x && y == cur->y) {
 			return 1;
 		}
-		
+
 		cur = cur->next;
 	}
-	
+
 	return 0;
 }
 
@@ -230,7 +388,7 @@ void move_body() {
 void rand_speed(int num) {
 	if (num == 1)
 		speed -= rand() % 150;
-	
+
 	if (num == 2)
 		speed += rand() % 100;
 }
@@ -239,7 +397,7 @@ void rand_speed(int num) {
 
 // 1 -> 미스테리 박스 점수 변동 기능에 사용, 매개 변수로 받은 change 값을 더 함(change가 음수인 경우에 점수가 0 이하이면 점수 변화 X (2024.11.23 수정)
 // 2 -> 폭탄 박스를 위한 기능, 현재 점수와는 상관 없이 무조건 점수를 변화 시킴
-void change_score(int num,int change) {
+void change_score(int num, int change) {
 
 	switch (num) {
 	case 1:
@@ -249,10 +407,10 @@ void change_score(int num,int change) {
 	case 2:
 		score += change;
 		break;
-	
+
 	default:
 		break;
-	
+
 	}
 
 }
@@ -279,7 +437,7 @@ void body_add(int r) {
 
 
 // 커서 위치 이동
-void gotoxy(int x, int y){
+void gotoxy(int x, int y) {
 
 	COORD pos = { x,y };
 
@@ -293,7 +451,7 @@ void gotoxy(int x, int y){
 void setup()
 {
 
-	
+
 	// 난이도 선택
 	speed = select_level();
 	system("cls");
@@ -306,8 +464,8 @@ void setup()
 	cursorInfo.bVisible = FALSE; // 커서 Visible TRUE(보임) FALSE(숨김)
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo); // 설정 적용
 
-	
-	
+
+
 
 	read_record();
 
@@ -364,7 +522,7 @@ void setup()
 	trapx = 0;
 	trapy = 0;
 
-	while (trapx == 0 || trapy == 0 
+	while (trapx == 0 || trapy == 0
 		|| (trapx == fruitx && trapy == fruity)
 		|| (trapx == mysteryx && trapy == mysteryy)) {
 		trapx = rand() % 21;
@@ -385,15 +543,15 @@ void setup()
 	bomb[0].x = 0;
 	bomb[0].y = 0;
 	while (bomb[0].x == 0 || bomb[0].y == 0
-		||(bomb[0].x == fruitx  && bomb[0].y == fruity)
-		||(bomb[0].x == mysteryx && bomb[0].y == mysteryy)
+		|| (bomb[0].x == fruitx && bomb[0].y == fruity)
+		|| (bomb[0].x == mysteryx && bomb[0].y == mysteryy)
 		|| (bomb[0].x == trapx && bomb[0].y == trapy)) {
 
 		bomb[0].x = rand() % 21;
 		bomb[0].y = rand() % 21;
 	}
 
-	
+
 
 
 	score = 0;
@@ -411,8 +569,8 @@ void draw()
 				|| j == 0
 				|| j == width - 1) {
 				printf("#");
-				if (i == 0 && j == width - 1) printf(" Best player\t: %s\t ", best_player); 
-				if (i == 1 && j == width - 1) printf(" Highest Score\t: %d\t ",  highest_score);
+				if (i == 0 && j == width - 1) printf(" Best player\t: %s\t ", best_player);
+				if (i == 1 && j == width - 1) printf(" Highest Score\t: %d\t ", highest_score);
 
 				if (i == 3 && j == width - 1) printf(" Player\t\t: %s\t ", player);
 				if (i == 4 && j == width - 1) printf(" Score\t\t: %d\t ", score);
@@ -438,9 +596,9 @@ void draw()
 					|| i == bomb[3].x && j == bomb[3].y) // bomb의 모든 좌표 확인
 				{
 					printf("▣");
-					
+
 				}
-				else if (i == mysteryx && j == mysteryy )
+				else if (i == mysteryx && j == mysteryy)
 				{
 					if (mystery_cnt == 1) {
 						printf("?");
@@ -464,8 +622,8 @@ void draw()
 					printf(" ");
 				}
 			}
-					
-			
+
+
 		}
 		printf("\n");
 	}
@@ -526,12 +684,12 @@ void logic()
 	if (score > 200) {
 		if (st_level == 1) level = 5;
 	}
-	
+
 
 
 
 	// 레벨에 따라 속도, bomb 개수 설정, level3, level5에서 bomb가 새로 생기면 (x, y 좌표가 NULL일 때) 좌표 설정
-	switch(level) {
+	switch (level) {
 	default:
 		speed = lvl1;
 		bomb_cnt = 1;
@@ -567,8 +725,8 @@ void logic()
 	case 5:
 		speed = lvl5;
 		bomb_cnt = 4;
-		
-	
+
+
 		if (bomb[2].x == NULL && bomb[2].y == NULL) {
 			bomb[2].x = 0;
 			bomb[2].y = 0;
@@ -585,7 +743,7 @@ void logic()
 			}
 		}
 
-		if (bomb[2].x == NULL && bomb[2].y == NULL){
+		if (bomb[2].x == NULL && bomb[2].y == NULL) {
 			bomb[3].x = 0;
 			bomb[3].y = 0;
 			while (bomb[3].x == 0 || bomb[3].y == 0
@@ -614,7 +772,7 @@ void logic()
 		// 머리의 좌표를 먼저 변경하면 머리 바로 다음 몸통이 사라지는 것을 발견 
 		// -> 몸통의 좌표를 먼저 변경한 이후, 머리 좌표변경 
 		// (어차피 머리가 있는 방향으로 이동 및 머리가 보고 있던 방향으로 방향값 변경)
-		move_body(); 
+		move_body();
 		head->y--;
 		break;
 	case 2:
@@ -634,7 +792,7 @@ void logic()
 	}
 
 	// If the game is over 
-	if (head->x <= 0 || head->x >= height-1
+	if (head->x <= 0 || head->x >= height - 1
 		|| head->y <= 0 || head->y >= width - 1)
 		gameover = 1;
 
@@ -647,7 +805,7 @@ void logic()
 	if ((head->x == fruitx && head->y == fruity) /*|| (round_snake(fruitx, fruity) == 1 )*/) {
 
 		fruitx = 0;
-		while (fruitx == 0 ) {
+		while (fruitx == 0) {
 			fruitx = rand() % 21;
 		}
 
@@ -659,7 +817,7 @@ void logic()
 
 		body_length++;
 		insert_body(head, create_body(head->x, head->y, head->direction, body_length)); // fruit을 먹었을 때 몸통 추가
-		
+
 
 		score += 10;
 	}
@@ -691,7 +849,7 @@ void logic()
 		// event(mystery)
 		mysteryx = 0;
 		mysteryy = 0;
-		
+
 		while (mysteryx == 0 || mysteryy == 0
 			|| (mysteryx == fruitx && mysteryy == fruity)
 			|| (mysteryx == trapx && mysteryy == trapy)
@@ -702,7 +860,7 @@ void logic()
 			mysteryx = rand() % 21;
 			mysteryy = rand() % 21;
 		}
-		
+
 		int effect = rand() % 3;
 		switch (effect) {
 		case 0: // 점수 증가
@@ -717,7 +875,7 @@ void logic()
 			body_add(random_num(5));
 			break;
 		}
-		
+
 
 		mystery_cnt--;
 
@@ -727,8 +885,8 @@ void logic()
 
 	// snake가 trap에 닿았을 때
 	if ((head->x == trapx && head->y == trapy)) {
-		int cut_num = body_length == 1 ? 0 : random_num(body_length-1); // 1~(몸통길이-1) 중 랜덤한 수 만큼 절단 (머리 제외)
-		
+		int cut_num = body_length == 1 ? 0 : random_num(body_length - 1); // 1~(몸통길이-1) 중 랜덤한 수 만큼 절단 (머리 제외)
+
 		body* prev = head;
 		body* cur = head->next;
 
@@ -753,7 +911,7 @@ void logic()
 			if (cur->body_no > body_length - cut_num) {
 				prev->next = NULL;
 				find_tail(cut_bodies)->next = cur;
-				
+
 				break;
 			}
 
@@ -817,27 +975,4 @@ int write_record() {
 
 		fclose(fp);
 	}
-}
-
-
-
-void main()
-{
-	srand(time(NULL));
-
-	// Generate boundary 
-	setup();
-
-	// Until the game is over 
-	while (!gameover) {
-
-		// Function Call 
-		draw();
-		input();
-		logic();
-	}
-
-	write_record();
-	free_snake(head); // snake 동적할당 해제
-	free_snake(cut_bodies);
 }
