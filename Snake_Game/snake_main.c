@@ -38,6 +38,26 @@ enum Speed {
 };
 
 
+enum ColorType {
+	Black,  	//0
+	DarkBlue,	//1
+	DarkGreen,	//2
+	DarkSkyBlue,    //3
+	DarkRed,  	//4
+	DarkPurple,	//5
+	DarkYellow,	//6
+	Gray,		//7
+	DarkGray,	//8
+	Blue,		//9
+	Green,		//10
+	SkyBlue,	//11
+	Red,		//12
+	Purple,		//13
+	Yellow,		//14
+	White		//15
+};
+
+
 
 body * head = NULL; // 머리 선언
 
@@ -64,6 +84,9 @@ char player[20] = "Anonym";
 
 char best_player[20];
 int highest_score = 0;
+
+
+
 
 
 
@@ -131,6 +154,8 @@ void body_add(int r);
 
 // 커서 위치 이동
 void gotoxy(int x, int y);
+void textcolor(int colorNum);
+int KEYINPUT();
 
 
 // Function to generate the fruit 
@@ -194,22 +219,203 @@ void main()
 int select_level() {
 	enum Speed speed = lvl1;
 	int sel = 0;
-	char answer[sizeof("당연하지렁")];
+	char answer[20];
 
-	printf("(∩^o^)⊃━☆ 안녕하지렁~ 나는 지렁이지렁!! \n");
-	printf("내가 성장할 수 있도록 잘 도와줄 수 있지렁?(당연하지렁 or 아니지렁)\n");
+
+	draw_dlg_box(80, 17);
+
+
+	gotoxy(3, 4);
+	printf("(∩^o^)⊃━☆ : ");
+
+	gotoxy(3, 11);
+	printf("??? : ");
+
+	gotoxy(15, 4);
+	printf("안녕하지렁~ 나는 지렁이지렁!!             ");
+
+	gotoxy(9, 11);
+	textcolor(DarkGray);
+	printf("(다음 : ENTER)");
+	textcolor(White);
+
+	while (!(_kbhit() && getchar() == '\n')) {}
+	gotoxy(9, 11);
+	printf("              ");
+
+	char s[20];
+	gotoxy(15, 4);
+	printf("게임 방법을 알고 있지렁?                      ");
+
+	KEYINPUT();
+	
+	gotoxy(9, 11);
+	textcolor(DarkGray);
+	printf("(모르지렁 or 알지렁)");
+	textcolor(White);
+
+
+	gotoxy(9, 11);
+	scanf_s("%s", s, (int)sizeof("모르지렁"));
+
+
+	gotoxy(9, 11);
+	printf("                    ");
+
+
+
+	if (!strcmp(s, "모르지렁")) {
+		gotoxy(15, 4);
+		printf("설명 시작하겠지렁                ");
+
+		gotoxy(9, 11);
+		textcolor(DarkGray);
+		printf("(다음 : ENTER)");
+		textcolor(White);
+
+		while (!(_kbhit() && getchar() == '\n')) {}
+		gotoxy(15, 4);
+		printf("                                                               ");
+
+
+		gotoxy(15, 4);
+		printf("이동은 w, a, s, d로 하지렁");
+
+		gotoxy(9, 11);
+
+		while (!(_kbhit() && getchar() == '\n')) {}
+		gotoxy(15, 4);
+		printf("                                                        ");
+
+
+		gotoxy(15, 4);
+		printf("벽에 닿으면 죽지렁");
+
+		gotoxy(9, 11);
+		
+		while (!(_kbhit() && getchar() == '\n')) {}
+		gotoxy(15, 4);
+		printf("                                                        ");
+
+
+		gotoxy(15, 4);
+		printf("*는 먹이지렁, 먹으면 점수가 증가하고 몸통이 늘어나지렁");
+
+		gotoxy(9, 11);
+
+		while (!(_kbhit() && getchar() == '\n')) {}
+		gotoxy(15, 4);
+		printf("                                                        ");
+
+
+		gotoxy(15, 4);
+		printf("?는 미스테리박스지렁, 먹으면 랜덤으로 효과가 발생하지렁");
+		gotoxy(15, 5);
+		printf("점수 감소, 점수 증가, 몸통 길이 증가가 있지렁 ");
+
+		gotoxy(9, 11);
+
+		while (!(_kbhit() && getchar() == '\n')) {}
+		gotoxy(15, 4);
+		printf("                                                        ");
+		gotoxy(15, 5);
+		printf("                                                        ");
+
+
+		gotoxy(15, 4);
+		printf("▣는 폭탄이지렁, 먹으면 점수가 감소하지렁");
+
+		gotoxy(9, 11);
+
+		while (!(_kbhit() && getchar() == '\n')) {}
+		gotoxy(15, 4);
+		printf("                                                        ");
+
+
+		gotoxy(15, 4);
+		printf("@는 부비트랩이지렁, 먹으면 몸통이 잘려 버리지렁... 무섭지렁...");
+		gotoxy(15, 5);
+		printf("잘린 몸통은 남아 있고, 몸통을 먹으면 죽는 것이지렁.");
+
+		gotoxy(9, 11);
+
+		while (!(_kbhit() && getchar() == '\n')) {}
+		gotoxy(15, 4);
+		printf("                                                               ");
+		gotoxy(15, 5);
+		printf("                                                               ");
+
+
+		gotoxy(15, 4);
+		printf("설명 끝났지렁");
+
+		gotoxy(9, 11);
+
+		while (!(_kbhit() && getchar() == '\n')) {}
+		gotoxy(15, 4);
+		printf("                                                               ");
+	}
+
+
+
+	gotoxy(15, 4);
+	printf("내가 성장할 수 있도록 잘 도와줄 수 있지렁?");
+
+	gotoxy(9, 11);
+	textcolor(DarkGray);
+	printf("(당연하지렁 or 싫지렁)");
+	textcolor(White);
+
+	
+	gotoxy(9, 11);
 	scanf_s("%s", answer, (int)sizeof("당연하지렁"));
+
+	gotoxy(9, 11);
+	printf("                        ");
+
+
+
 	if (strcmp(answer, "당연하지렁") == 0) {
-		printf("좋았지렁!! 그럼 이제 이름을 말해지렁!");
+		gotoxy(15, 4);
+		printf("                                                        ");
+		gotoxy(15, 5);
+		printf("                                                        ");
+
+		gotoxy(15, 4);
+		printf("좋았지렁!! 그럼 이제 이름을 말해지렁!        ");
+
+
+		gotoxy(9, 11);
 		scanf_s("%s", player, 20);
-		printf("%s !! 알겠어 잘 기억하겠지렁.>,<", player);
-		printf("그럼 이제 원하는 레벨을 말해지렁!");
+
+		gotoxy(3, 11);
+		printf("%s :                ", player);
+
+		
+		gotoxy(15, 4);
+		printf("%s !! 알겠어 잘 기억하겠지렁.>,<       ", player);
+
+		gotoxy(15, 4);
+		printf("그럼 이제 원하는 레벨을 말해지렁!      ");
+
+
+		gotoxy(strlen(player) + 6, 11);
+		printf("Level ");
+		scanf_s("%d", &sel);
+
+		KEYINPUT();
 	}
 	else {
+		gotoxy(15, 4);
 		printf("알겠지렁..그럼 아쉽지만 여기서 종료하겠지렁..");
+
+		gotoxy(0, 21);
 		exit(0);
+
+		
 	}
-	scanf_s("%d", &sel);
+
+	
 
 	switch (sel) {
 	case 1:
@@ -243,9 +449,6 @@ int select_level() {
 }
 
 
-
-
-
 void draw_dlg_box(int box_width, int box_height) {
 	
 	for (int i = 0; i < box_height; i++) {
@@ -264,18 +467,6 @@ void draw_dlg_box(int box_width, int box_height) {
 
 
 }
-
-
-// 
-void print_line( int width, int height, char line[]) {
-	gotoxy(0, 0);
-	draw_dlg_box(width, height);
-
-	gotoxy(2, 2); // 커서 이동 (가로, 세로)
-	printf("%s", line);
-}
-
-
 
 
 
@@ -445,6 +636,18 @@ void gotoxy(int x, int y) {
 
 }
 
+void textcolor(enum colortype color) {
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+}
+
+int KEYINPUT() {// 한영키 누름
+	keybd_event(VK_HANGEUL, 0, 0, 0);//누름
+
+	keybd_event(VK_HANGEUL, 0, KEYEVENTF_KEYUP, 0);// 누름 해제
+
+	return 0;
+}
+
 
 // Function to generate the fruit 
 // within the boundary 
@@ -465,6 +668,7 @@ void setup()
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo); // 설정 적용
 
 
+	textcolor(White);
 
 
 	read_record();
@@ -565,18 +769,23 @@ void draw()
 
 	for (i = 0; i < height; i++) {
 		for (j = 0; j < width; j++) {
-			if (i == 0 || i == height - 1
-				|| j == 0
-				|| j == width - 1) {
-				printf("#");
-				if (i == 0 && j == width - 1) printf(" Best player\t: %s\t ", best_player);
-				if (i == 1 && j == width - 1) printf(" Highest Score\t: %d\t ", highest_score);
+			
 
-				if (i == 3 && j == width - 1) printf(" Player\t\t: %s\t ", player);
-				if (i == 4 && j == width - 1) printf(" Score\t\t: %d\t ", score);
-				if (i == 5 && j == width - 1) printf(" Level\t\t: %d\t ", level);
+			if (i == 0 && j == 0) printf("┏");
+			else if (i == 0 && j == width - 1) printf("┓");
+			else if (i == height - 1 && j == 0) printf("┗");
+			else if (i == height - 1 && j == width - 1) printf("┛");
+			else if (j == 0 || j == width - 1) {
+				printf("┃");
+			
+				if (i == 1 && j == width - 1) printf(" Best player\t: %s\t ", best_player);
+				if (i == 2 && j == width - 1) printf(" Highest Score\t: %d\t ", highest_score);
 
+				if (i == 4 && j == width - 1) printf(" Player\t\t: %s\t ", player);
+				if (i == 5 && j == width - 1) printf(" Score\t\t: %-d\t ", score);
+				if (i == 6 && j == width - 1) printf(" Level\t\t: %d\t ", level);
 			}
+			else if (i == 0 || i == height - 1) printf("━");
 			else {
 				if (i == head->x && j == head->y) {
 					printf("O");
@@ -640,18 +849,23 @@ void input()
 	if (_kbhit()) {
 		switch (getch()) {
 		case 'a':
+		case 'A':
 			flag = 1;
 			break;
 		case 's':
+		case 'S':
 			flag = 2;
 			break;
 		case 'd':
+		case 'D':
 			flag = 3;
 			break;
 		case 'w':
+		case 'W':
 			flag = 4;
 			break;
 		case 'x':
+		case 'X':
 			gameover = 1;
 			break;
 		}
