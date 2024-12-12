@@ -96,13 +96,19 @@ int highest_score = 0;
 int select_level();
 
 
-
-
-
+// 대화 상자 그리기
 void draw_dlg_box(int box_width, int box_height);
 
 
-void print_line(int x, int y, int width, int height,  char line[]);
+// 입력 예시(힌트) 설정
+void set_hint(int x, int y, char hint[30]);
+
+
+// 엔터 입력을 기다리는 함수
+void wait_enter();
+
+// 지정한 좌표로 커서를 이동해 " "를 출력하여 보이는 글자를 지우는 함수
+void delete_line(int x, int y);
 
 
 
@@ -154,8 +160,16 @@ void body_add(int r);
 
 // 커서 위치 이동
 void gotoxy(int x, int y);
-void textcolor(int colorNum);
+
+// 글자 색깔 바꾸기
+void textcolor(enum ColorType color);
+
+// 한영키 누르기
 int KEYINPUT();
+
+
+
+
 
 
 // Function to generate the fruit 
@@ -215,7 +229,7 @@ void main()
 
 
 
-// 레벨 선택
+// 레벨 선택, 처음 인트로 부분
 int select_level() {
 	enum Speed speed = lvl1;
 	int sel = 0;
@@ -234,14 +248,11 @@ int select_level() {
 	gotoxy(15, 4);
 	printf("안녕하지렁~ 나는 지렁이지렁!!             ");
 
-	gotoxy(9, 11);
-	textcolor(DarkGray);
-	printf("(다음 : ENTER)");
-	textcolor(White);
+	set_hint(9, 11, "(다음 : ENTER)");
 
-	while (!(_kbhit() && getchar() == '\n')) {}
-	gotoxy(9, 11);
-	printf("              ");
+	wait_enter();
+	
+	delete_line(9, 11);
 
 	char s[20];
 	gotoxy(15, 4);
@@ -249,18 +260,14 @@ int select_level() {
 
 	KEYINPUT();
 	
-	gotoxy(9, 11);
-	textcolor(DarkGray);
-	printf("(모르지렁 or 알지렁)");
-	textcolor(White);
+	set_hint(9, 11, "(모르지렁 or 알지렁)");
 
 
 	gotoxy(9, 11);
 	scanf_s("%s", s, (int)sizeof("모르지렁"));
 
 
-	gotoxy(9, 11);
-	printf("                    ");
+	delete_line(9, 11);
 
 
 
@@ -268,14 +275,13 @@ int select_level() {
 		gotoxy(15, 4);
 		printf("설명 시작하겠지렁                ");
 
-		gotoxy(9, 11);
-		textcolor(DarkGray);
-		printf("(다음 : ENTER)");
-		textcolor(White);
 
-		while (!(_kbhit() && getchar() == '\n')) {}
-		gotoxy(15, 4);
-		printf("                                                               ");
+		set_hint(9, 11, "(다음 : ENTER)");
+		gotoxy(9, 11);
+
+		wait_enter();
+		
+		
 
 
 		gotoxy(15, 4);
@@ -283,9 +289,7 @@ int select_level() {
 
 		gotoxy(9, 11);
 
-		while (!(_kbhit() && getchar() == '\n')) {}
-		gotoxy(15, 4);
-		printf("                                                        ");
+		wait_enter();
 
 
 		gotoxy(15, 4);
@@ -293,9 +297,7 @@ int select_level() {
 
 		gotoxy(9, 11);
 		
-		while (!(_kbhit() && getchar() == '\n')) {}
-		gotoxy(15, 4);
-		printf("                                                        ");
+		wait_enter();
 
 
 		gotoxy(15, 4);
@@ -303,9 +305,9 @@ int select_level() {
 
 		gotoxy(9, 11);
 
-		while (!(_kbhit() && getchar() == '\n')) {}
-		gotoxy(15, 4);
-		printf("                                                        ");
+		wait_enter();
+
+		
 
 
 		gotoxy(15, 4);
@@ -315,11 +317,10 @@ int select_level() {
 
 		gotoxy(9, 11);
 
-		while (!(_kbhit() && getchar() == '\n')) {}
-		gotoxy(15, 4);
-		printf("                                                        ");
-		gotoxy(15, 5);
-		printf("                                                        ");
+		wait_enter();
+
+		delete_line(15, 4);
+		delete_line(15, 5);
 
 
 		gotoxy(15, 4);
@@ -327,23 +328,22 @@ int select_level() {
 
 		gotoxy(9, 11);
 
-		while (!(_kbhit() && getchar() == '\n')) {}
-		gotoxy(15, 4);
-		printf("                                                        ");
+		wait_enter();
+
+		delete_line(15, 4);
 
 
 		gotoxy(15, 4);
-		printf("@는 부비트랩이지렁, 먹으면 몸통이 잘려 버리지렁... 무섭지렁...");
+		printf("◎는 부비트랩이지렁, 먹으면 몸통이 잘려 버리지렁... 무섭지렁...");
 		gotoxy(15, 5);
 		printf("잘린 몸통은 남아 있고, 몸통을 먹으면 죽는 것이지렁.");
 
 		gotoxy(9, 11);
 
-		while (!(_kbhit() && getchar() == '\n')) {}
-		gotoxy(15, 4);
-		printf("                                                               ");
-		gotoxy(15, 5);
-		printf("                                                               ");
+		wait_enter();
+
+		delete_line(15, 4);
+		delete_line(15, 5);
 
 
 		gotoxy(15, 4);
@@ -351,9 +351,9 @@ int select_level() {
 
 		gotoxy(9, 11);
 
-		while (!(_kbhit() && getchar() == '\n')) {}
-		gotoxy(15, 4);
-		printf("                                                               ");
+		wait_enter();
+
+		delete_line(15, 4);
 	}
 
 
@@ -361,10 +361,8 @@ int select_level() {
 	gotoxy(15, 4);
 	printf("내가 성장할 수 있도록 잘 도와줄 수 있지렁?");
 
-	gotoxy(9, 11);
-	textcolor(DarkGray);
-	printf("(당연하지렁 or 싫지렁)");
-	textcolor(White);
+
+	set_hint(9, 11, "(당연하지렁 or 싫지렁)");
 
 	
 	gotoxy(9, 11);
@@ -449,6 +447,7 @@ int select_level() {
 }
 
 
+// 대화 상자 그리기
 void draw_dlg_box(int box_width, int box_height) {
 	
 	for (int i = 0; i < box_height; i++) {
@@ -469,6 +468,25 @@ void draw_dlg_box(int box_width, int box_height) {
 }
 
 
+// 입력 예시(힌트) 설정
+void set_hint(int x, int y, char hint[30]) {
+	gotoxy(x, y);
+	textcolor(DarkGray);
+	printf("%s", hint);
+	textcolor(White);
+}
+
+
+// 엔터 입력을 기다리는 함수
+void wait_enter() {
+	while (!(_kbhit() && getchar() == '\n')) {}
+}
+
+// 지정한 좌표로 커서를 이동해 " "를 출력하여 보이는 글자를 지우는 함수
+void delete_line(int x, int y) {
+	gotoxy(x, y);
+	printf("                                                               ");
+}
 
 
 
@@ -574,16 +592,7 @@ void move_body() {
 
 
 
-/*// 1 -> 0~149 사이의 값을 speed에서 뺌 -> 속도 증가
-// 2 -> 0~99 사이의 값을 speed에 더함 -> 속도 감소
-void rand_speed(int num) {
-	if (num == 1)
-		speed -= rand() % 150;
 
-	if (num == 2)
-		speed += rand() % 100;
-}
-*/
 
 
 // 1 -> 미스테리 박스 점수 변동 기능에 사용, 매개 변수로 받은 change 값을 더 함(change가 음수인 경우에 점수가 0 이하이면 점수 변화 X (2024.11.23 수정)
@@ -627,6 +636,8 @@ void body_add(int r) {
 
 
 
+
+
 // 커서 위치 이동
 void gotoxy(int x, int y) {
 
@@ -636,10 +647,14 @@ void gotoxy(int x, int y) {
 
 }
 
+
+// 글자 색 바꾸기
 void textcolor(enum colortype color) {
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 }
 
+
+// 한영키 누르기
 int KEYINPUT() {// 한영키 누름
 	keybd_event(VK_HANGEUL, 0, 0, 0);//누름
 
@@ -668,7 +683,7 @@ void setup()
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo); // 설정 적용
 
 
-	textcolor(White);
+	textcolor(White); // 글자 색깔 변환 (기본 : Gray)
 
 
 	read_record();
@@ -678,6 +693,7 @@ void setup()
 	head = (body*)malloc(sizeof(body));
 
 	// Stores height and width 
+	// head 내 변수 초기화
 	head->x = height / 2;
 	head->y = width / 2;
 	head->next = NULL;
@@ -687,7 +703,7 @@ void setup()
 
 	cut_bodies = (body*)malloc(sizeof(body));
 
-	// Stores height and width 
+	// cut_bodies 내 변수 초기화
 	cut_bodies->x = NULL;
 	cut_bodies->y = NULL;
 	cut_bodies->next = NULL;
@@ -697,14 +713,14 @@ void setup()
 
 	// fruit
 	fruitx = 0;
-	while (fruitx == 0) {
-		fruitx = rand() % 21;
+	fruity = 0;
+
+	while (fruitx == 0 || fruity == 0) {
+		fruitx = rand() % (height - 1);
+		fruity = rand() % (width - 1);
 	}
 
-	fruity = 0;
-	while (fruity == 0) {
-		fruity = rand() % 21;
-	}
+	
 
 
 
@@ -712,10 +728,11 @@ void setup()
 	// event
 	mysteryx = 0;
 	mysteryy = 0;
+
 	while (mysteryx == 0 || mysteryy == 0
 		|| (mysteryx == fruitx && mysteryy == fruity)) {
-		mysteryx = rand() % 21;
-		mysteryy = rand() % 21;
+		mysteryx = rand() % (height - 1);
+		mysteryy = rand() % (width - 1);
 	}
 
 
@@ -729,8 +746,8 @@ void setup()
 	while (trapx == 0 || trapy == 0
 		|| (trapx == fruitx && trapy == fruity)
 		|| (trapx == mysteryx && trapy == mysteryy)) {
-		trapx = rand() % 21;
-		trapy = rand() % 21;
+		trapx = rand() % (height - 1);
+		trapy = rand() % (width-1);
 	}
 
 
@@ -751,8 +768,8 @@ void setup()
 		|| (bomb[0].x == mysteryx && bomb[0].y == mysteryy)
 		|| (bomb[0].x == trapx && bomb[0].y == trapy)) {
 
-		bomb[0].x = rand() % 21;
-		bomb[0].y = rand() % 21;
+		bomb[0].x = rand() % (height - 1);
+		bomb[0].y = rand() % (width -1);
 	}
 
 
@@ -768,9 +785,9 @@ void draw()
 	//system("cls");
 
 	for (i = 0; i < height; i++) {
+		gotoxy(29, i);
 		for (j = 0; j < width; j++) {
 			
-
 			if (i == 0 && j == 0) printf("┏");
 			else if (i == 0 && j == width - 1) printf("┓");
 			else if (i == height - 1 && j == 0) printf("┗");
@@ -784,6 +801,9 @@ void draw()
 				if (i == 4 && j == width - 1) printf(" Player\t\t: %s\t ", player);
 				if (i == 5 && j == width - 1) printf(" Score\t\t: %-d\t ", score);
 				if (i == 6 && j == width - 1) printf(" Level\t\t: %d\t ", level);
+
+
+				//if (i == 20 && j == width - 1) printf(" press X to quit the game\n");
 			}
 			else if (i == 0 || i == height - 1) printf("━");
 			else {
@@ -823,7 +843,7 @@ void draw()
 				}
 				else if (i == trapx && j == trapy)
 				{
-					printf("@");//기호 바꿔도 댐
+					printf("◎");//기호 바꿔도 댐
 
 				}
 				else
@@ -839,8 +859,11 @@ void draw()
 
 	// Print the score after the 
 	// game ends 
+	
 
+	gotoxy(30, 22);
 	printf("press X to quit the game\n");
+	
 }
 
 // Function to take the input 
@@ -924,10 +947,11 @@ void logic()
 				|| (bomb[1].x == mysteryx && bomb[1].y == mysteryy)
 				|| (bomb[1].x == fruitx && bomb[1].y == fruity)
 				|| (bomb[1].x == bomb[0].x && bomb[1].y == bomb[0].y)
-				|| (round_snake(head, bomb[1].x, bomb[1].y) == 1)) {
+				|| (round_snake(head, bomb[1].x, bomb[1].y))) 
+			{
 
-				bomb[1].x = rand() % 21;
-				bomb[1].y = rand() % 21;
+				bomb[1].x = rand() % (height - 1);
+				bomb[1].y = rand() % (width - 1);
 			}
 		}
 		break;
@@ -950,10 +974,11 @@ void logic()
 				|| (bomb[2].x == fruitx && bomb[2].y == fruity)
 				|| (bomb[2].x == bomb[0].x && bomb[2].y == bomb[0].y)
 				|| (bomb[2].x == bomb[1].x && bomb[2].y == bomb[1].y)
-				|| (round_snake(head, bomb[1].x, bomb[1].y) == 1)) {
+				|| (round_snake(head, bomb[2].x, bomb[2].y))) 
+			{
 
-				bomb[2].x = rand() % 21;
-				bomb[2].y = rand() % 21;
+				bomb[2].x = rand() % (height - 1);
+				bomb[2].y = rand() % (width - 1);
 			}
 		}
 
@@ -967,10 +992,11 @@ void logic()
 				|| (bomb[3].x == bomb[0].x && bomb[3].y == bomb[0].y)
 				|| (bomb[3].x == bomb[1].x && bomb[3].y == bomb[1].y)
 				|| (bomb[3].x == bomb[2].x && bomb[3].y == bomb[2].y)
-				|| (round_snake(head, bomb[1].x, bomb[1].y) == 1)) {
+				|| (round_snake(head, bomb[3].x, bomb[3].y))) 
+			{
 
-				bomb[3].x = rand() % 21;
-				bomb[3].y = rand() % 21;
+				bomb[3].x = rand() % (height - 1);
+				bomb[3].y = rand() % (width - 1);
 			}
 		}
 		break;
@@ -1010,7 +1036,7 @@ void logic()
 		|| head->y <= 0 || head->y >= width - 1)
 		gameover = 1;
 
-	if (round_snake(head, head->x, head->y) == 1) // 몸통에 머리가 닿으면 종료
+	if (round_snake(head, head->x, head->y)) // 몸통에 머리가 닿으면 종료
 		gameover = 1;
 
 
@@ -1019,14 +1045,21 @@ void logic()
 	if ((head->x == fruitx && head->y == fruity) /*|| (round_snake(fruitx, fruity) == 1 )*/) {
 
 		fruitx = 0;
-		while (fruitx == 0) {
-			fruitx = rand() % 21;
+		fruity = 0;
+
+		while (fruitx == 0 || fruity == 0
+			|| (fruitx == trapx && fruity == trapy)
+			|| (fruitx == mysteryx && fruity == mysteryy)
+			|| (fruitx == bomb[0].x && fruity == bomb[0].y)
+			|| (fruitx == bomb[1].x && fruity == bomb[1].y)
+			|| (fruitx == bomb[2].x && fruity == bomb[2].y)
+			|| (fruitx == bomb[3].x && fruity == bomb[3].y)
+			|| (round_snake(head, fruitx, fruity))) 
+		{
+			fruitx = rand() % (height - 1);
+			fruity = rand() % (width - 1);
 		}
 
-		fruity = 0;
-		while (fruity == 0) {
-			fruity = rand() % 21;
-		}
 
 
 		body_length++;
@@ -1048,10 +1081,16 @@ void logic()
 			while (bomb[i].x == 0 || bomb[i].y == 0
 				|| (bomb[i].x == fruitx && bomb[i].y == fruity)
 				|| (bomb[i].x == mysteryx && bomb[i].y == mysteryy)
-				|| (round_snake(head, bomb[i].x, bomb[i].y) == 1)) {
+				|| (bomb[i].x == trapx && bomb[i].y == trapy)
+				|| (i != 0 &&(bomb[i].x == bomb[0].x && bomb[i].y == bomb[0].y))
+				|| (i != 1 &&(bomb[i].x == bomb[1].x && bomb[i].y == bomb[1].y))
+				|| (i != 2 && (bomb[i].x == bomb[2].x && bomb[i].y == bomb[2].y))
+				|| (i != 3 && (bomb[i].x == bomb[3].x && bomb[i].y == bomb[3].y))
+				|| (round_snake(head, bomb[i].x, bomb[i].y))) 
+			{
 
-				bomb[i].x = rand() % 21;
-				bomb[i].y = rand() % 21;
+				bomb[i].x = rand() % (height - 1);
+				bomb[i].y = rand() % (width - 1);
 			}
 		}
 	}
@@ -1070,9 +1109,11 @@ void logic()
 			|| (mysteryx == bomb[0].x && mysteryy == bomb[0].y)
 			|| (mysteryx == bomb[1].x && mysteryy == bomb[1].y)
 			|| (mysteryx == bomb[2].x && mysteryy == bomb[2].y)
-			|| (mysteryx == bomb[3].x && mysteryy == bomb[3].y)) {
-			mysteryx = rand() % 21;
-			mysteryy = rand() % 21;
+			|| (mysteryx == bomb[3].x && mysteryy == bomb[3].y)
+			|| (round_snake(head, mysteryx, mysteryy))) 
+		{
+			mysteryx = rand() % (height - 1);
+			mysteryy = rand() % (width - 1);
 		}
 
 		int effect = rand() % 3;
@@ -1104,19 +1145,21 @@ void logic()
 		body* prev = head;
 		body* cur = head->next;
 
-
+		// trap 좌표 재설정
 		trapx = 0;
 		trapy = 0;
 
 		while (trapx == 0 || trapy == 0
 			|| (trapx == fruitx && trapy == fruity)
 			|| (trapx == mysteryx && trapy == mysteryy)
-			|| (mysteryx == bomb[0].x && mysteryy == bomb[0].y)
-			|| (mysteryx == bomb[1].x && mysteryy == bomb[1].y)
-			|| (mysteryx == bomb[2].x && mysteryy == bomb[2].y)
-			|| (mysteryx == bomb[3].x && mysteryy == bomb[3].y)) {
-			trapx = rand() % 21;
-			trapy = rand() % 21;
+			|| (trapx == bomb[0].x && trapy == bomb[0].y)
+			|| (trapx == bomb[1].x && trapy == bomb[1].y)
+			|| (trapx == bomb[2].x && trapy == bomb[2].y)
+			|| (trapx == bomb[3].x && trapy == bomb[3].y)
+			||(round_snake(head, trapx, trapy))) 
+		{
+			trapx = rand() % (height - 1);
+			trapy = rand() % (width - 1);
 		}
 
 
