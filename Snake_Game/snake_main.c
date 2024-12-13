@@ -8,8 +8,6 @@
 #include <time.h>
 #include <string.h>
 
-#include <wchar.h>
-
 
 struct BODY
 {
@@ -65,25 +63,25 @@ body * head = NULL; // 머리 선언
 body* cut_bodies = NULL;
 
 // 연결리스트 이용으로  기존에 있던 변수 x, y 필요 없어짐에 따라 제거
-int i, j, height = 22, width = 22;  
+int i, j, height = 27, width = 27;  
 int gameover, score;
 
 int fruitx, fruity, flag;
 int mysteryx, mysteryy;  // mystery -> '?'
-int trapx, trapy;
+int trapx, trapy;  // trap -> ◎
 
 BOMB bomb[4]; // bomb -> ▣
 
 int mystery_cnt = 0, bomb_cnt = 1;// mystery와 bomb의 개수
 int body_length = 1;
-int speed = lvl1;
+int speed = lvl1; 
 int st_level = 0;
 int level = 1;
 
-char player[20] = "Anonym";
+char player[20] = "Anonym"; // 플레이어 이름, 기본값 = "Anonym"
 
-char best_player[20];
-int highest_score = 0;
+char best_player[20]; // 최고 점수 기록자 이름
+int highest_score = 0; // 최고 점수
 
 
 
@@ -97,7 +95,7 @@ int select_level();
 
 
 // 대화 상자 그리기
-void draw_dlg_box(int box_width, int box_height);
+void draw_dlg_box(int box_width, int box_height, int start_x);
 
 
 // 입력 예시(힌트) 설정
@@ -187,7 +185,7 @@ void input();
 void logic();
 
 
-
+void gameover_screen();
 
 
 
@@ -197,11 +195,13 @@ void free_snake(body* node);
 
 
 
-
+// record.txt 파일에서 기록을 읽어와 최고 점수와 플레이어를 화면에 띄울 수 있도록 하는 함수
 int read_record();
 
-
+// 게임 종료 시점에 현재 플레이어의 점수와 최고 점수를 비교하여 최고 점수를 갱신 혹은 유지하는 함수, record.txt 파일에 점수를 저장한다.
 int write_record();
+
+
 
 
 
@@ -224,6 +224,9 @@ void main()
 	write_record();
 	free_snake(head); // snake 동적할당 해제
 	free_snake(cut_bodies);
+
+	gameover_screen();
+	system("pause");
 }
 
 
@@ -236,7 +239,7 @@ int select_level() {
 	char answer[20];
 
 
-	draw_dlg_box(80, 17);
+	draw_dlg_box(80, 17, 0);
 
 
 	gotoxy(3, 4);
@@ -408,6 +411,8 @@ int select_level() {
 		printf("알겠지렁..그럼 아쉽지만 여기서 종료하겠지렁..");
 
 		gotoxy(0, 21);
+
+		system("pause");
 		exit(0);
 
 		
@@ -448,9 +453,10 @@ int select_level() {
 
 
 // 대화 상자 그리기
-void draw_dlg_box(int box_width, int box_height) {
+void draw_dlg_box(int box_width, int box_height, int start_x) {
 	
 	for (int i = 0; i < box_height; i++) {
+		gotoxy(start_x, i);
 		for (int j = 0; j < box_width; j++) {
 			if (i == 0 && j == 0) printf("┏");
 			else if (i == 0 && j == box_width - 1) printf("┓");
@@ -668,7 +674,7 @@ int KEYINPUT() {// 한영키 누름
 // within the boundary 
 void setup()
 {
-
+	system("mode con:cols=150 lines=40");
 
 	// 난이도 선택
 	speed = select_level();
@@ -861,7 +867,7 @@ void draw()
 	// game ends 
 	
 
-	gotoxy(30, 22);
+	gotoxy(30, height);
 	printf("press X to quit the game\n");
 	
 }
@@ -1188,6 +1194,45 @@ void logic()
 }
 
 
+void gameover_screen() {
+	system("cls");
+
+	draw_dlg_box(27, 27, 29);
+	
+	gotoxy(35, 2);
+	printf("< MY RECORD >");
+	gotoxy(33, 4);
+	printf("Name\t: %s", player);
+	gotoxy(33, 7);
+	printf("Score\t: %d", score);
+
+	gotoxy(30, 13);
+	printf("=========================");
+
+	gotoxy(34, 15);
+	printf("< HIGH RECORD >");
+	gotoxy(33, 17);
+	printf("Name\t: %s", best_player);
+	if (score > highest_score) {
+		gotoxy(35, 18);
+		printf("\t-> %s", player);
+		textcolor(Red);
+		printf("  new!");
+		textcolor(White);
+	}
+		
+	gotoxy(33, 20);
+	printf("Score\t: %d", highest_score);
+	if (score > highest_score) {
+		gotoxy(35, 21);
+		printf("\t-> %d", score);
+		textcolor(Red);
+		printf("  new!");
+		textcolor(White);
+	}
+	gotoxy(29, height);
+
+}
 
 
 
