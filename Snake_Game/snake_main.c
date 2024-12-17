@@ -72,13 +72,16 @@ body* cut_bodies = NULL;
 int i, j, height = 27, width = 27;  
 int gameover, score;
 
-int fruitx, fruity, flag;
+int fruitx, fruity, flag; // fruit -> '*'
 int mysteryx, mysteryy;  // mystery -> '?'
-int trapx, trapy;  // trap -> ◎
+int trapx, trapy;  // trap -> '◎'
 
-BOMB bomb[4]; // bomb -> ▣
+BOMB bomb[4]; // bomb -> '▣'
 
-int mystery_cnt = 0, bomb_cnt = 1;// mystery와 bomb의 개수
+// mystery와 bomb의 개수 
+// mystery는 하나씩(mystery_cnt는 mystery 존재 유무 표시에 가까움), 
+// bomb은 최대 4개, 기본 1개
+int mystery_cnt = 0, bomb_cnt = 1;
 int body_length = 1;
 int speed = lvl1; 
 int st_level = 0;
@@ -174,6 +177,8 @@ int write_record();
 
 
 
+
+
 void main()
 {
 	srand(time(NULL));
@@ -193,10 +198,14 @@ void main()
 	write_record();
 	free_snake(head); // snake 동적할당 해제
 	free_snake(cut_bodies);
+	
+	gotoxy(29, height);
+	system("pause");
 
 	gameover_screen();
-	system("pause");
 }
+
+
 
 
 /// 함수 정의 ///
@@ -265,6 +274,7 @@ int select_level() {
 
 		wait_enter();
 
+		delete_line(15, 4);
 
 		gotoxy(15, 4);
 		printf("벽에 닿으면 죽지렁");
@@ -722,10 +732,15 @@ void setup()
 	mysteryx = 0;
 	mysteryy = 0;
 
-	while (mysteryx == 0 || mysteryy == 0
-		|| (mysteryx == fruitx && mysteryy == fruity)) {
-		mysteryx = rand() % (height - 1);
-		mysteryy = rand() % (width - 1);
+	if (rand() % 100 < 10)
+	{
+		while (mysteryx == 0 || mysteryy == 0
+			|| (mysteryx == fruitx && mysteryy == fruity)) {
+			mysteryx = rand() % (height - 1);
+			mysteryy = rand() % (width - 1);
+		}
+
+		mystery_cnt = 1;
 	}
 
 
@@ -1026,7 +1041,7 @@ void logic()
 		break;
 	}
 
-	// If the game is over 
+	// 벽에 닿으면 종료
 	if (head->x <= 0 || head->x >= height - 1
 		|| head->y <= 0 || head->y >= width - 1)
 		gameover = 1;
@@ -1090,6 +1105,23 @@ void logic()
 		}
 	}
 
+	// mystery가 생성되지 안앟았을 때
+	if (mystery_cnt== 0 && rand() % 100 < 10) { // mystery 생성은 10% 확률
+		while (mysteryx == 0 || mysteryy == 0
+			|| (mysteryx == fruitx && mysteryy == fruity)
+			|| (mysteryx == trapx && mysteryy == trapy)
+			|| (mysteryx == bomb[0].x && mysteryy == bomb[0].y)
+			|| (mysteryx == bomb[1].x && mysteryy == bomb[1].y)
+			|| (mysteryx == bomb[2].x && mysteryy == bomb[2].y)
+			|| (mysteryx == bomb[3].x && mysteryy == bomb[3].y)
+			|| (round_snake(head, mysteryx, mysteryy)))
+		{
+			mysteryx = rand() % (height - 1);
+			mysteryy = rand() % (width - 1);
+		}
+
+		mystery_cnt = 1;
+	}
 
 	// snake가 event(mystery)에 닿았을 때
 	if ((head->x == mysteryx && head->y == mysteryy) /*|| (round_snake(eventx, eventy) == 1)*/) {
@@ -1226,6 +1258,7 @@ void gameover_screen() {
 		textcolor(White);
 	}
 	gotoxy(29, height);
+	system("pause");
 
 }
 
