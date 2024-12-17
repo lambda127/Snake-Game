@@ -913,19 +913,19 @@ void input()
 void logic()
 {
 	// 점수가 50이 증가할 때마다 레벨 +1
-	if (score > 200) {
+	if (score >= 200) {
 		if (st_level == 1) level = 5;
 	}
-	else if (score > 150) {
+	else if (score >= 150) {
 		if (st_level == 1) level = 4;
 		if (st_level == 2) level = 5;
 	}
-	else if (score > 100) {
+	else if (score >= 100) {
 		if (st_level == 1) level = 3;
 		if (st_level == 2) level = 4;
 		if (st_level == 3) level = 5;
 	}
-	else if (score > 50) {
+	else if (score >= 50) {
 		if (st_level == 1) level = 2;
 		if (st_level == 2) level = 3;
 		if (st_level == 3) level = 4;
