@@ -27,13 +27,13 @@
 
   read_record() 함수
   
-<img src=https://github.com/user-attachments/assets/d51d19a9-2d8e-4120-a4a2-5d018896c726 width="50%" height="50%"/>
+<img src=https://github.com/user-attachments/assets/03ad6a81-552a-44f1-8c44-0ea2228e4f94 width="50%" height="50%"/>
 
 - 기록 저장 (완료)
 
   write_record() 함수
   
-<img src=https://github.com/user-attachments/assets/bb200842-93c4-4e51-ac0c-098e46f150ff width="50%" height="50%"/>
+<img src=https://github.com/user-attachments/assets/fc978daa-c45b-4f3b-b0f0-dd95ae4bfacd width="50%" height="50%"/>
 
 
 02. 이벤트성 기능
