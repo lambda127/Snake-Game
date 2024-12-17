@@ -808,10 +808,10 @@ void draw()
 			
 				// 게임 정보 표시
 				if (i == 1 && j == width - 1) printf(" Best player\t: %s\t ", best_player);
-				if (i == 2 && j == width - 1) printf(" Highest Score\t: %d\t ", highest_score);
+				if (i == 2 && j == width - 1) printf(" Highest Score\t: %-4d\t ", highest_score);
 
 				if (i == 4 && j == width - 1) printf(" Player\t\t: %s\t ", player);
-				if (i == 5 && j == width - 1) printf(" Score\t\t: %-d\t ", score);
+				if (i == 5 && j == width - 1) printf(" Score\t\t: %-4d\t ", score);
 				if (i == 6 && j == width - 1) printf(" Level\t\t: %d\t ", level);
 
 
@@ -1266,7 +1266,17 @@ void gameover_screen() {
 // record.txt 파일에서 기록을 읽어와 최고 점수와 플레이어를 화면에 띄울 수 있도록 하는 함수
 int read_record() {
 	FILE* fp = NULL;
+	
+	if (_access("record.txt", 0) == -1) { // 파일이 존재하지 않으면 "Anonym : 0"을 가지는 record.txt 파일 생성
+		fopen_s(&fp, "record.txt", "wt");
 
+		fprintf(fp, "Anonym : 0                                                                                    ");
+
+		fclose(fp);
+		fp = NULL;
+
+	}
+	
 	fopen_s(&fp, "record.txt", "rt");
 
 	fscanf_s(fp, "%s : %d ", best_player, 20, &highest_score);
@@ -1284,8 +1294,7 @@ int write_record() {
 
 		fopen_s(&fp, "record.txt", "wt");
 
-		fprintf(fp, "                                                                                                       \n");
-		fprintf(fp, "%s : %d \n", player, score);
+		fprintf(fp, "%s : %d                                                                                         ", player, score);
 
 		fclose(fp);
 	}
