@@ -1,22 +1,7 @@
-﻿  snake_main.c
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(185,8): warning C4244: '함수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(385,25): warning C4267: '함수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(709,18): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(716,16): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(717,16): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(719,24): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(720,22): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(778,13): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(779,13): warning C4047: '=': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(965,17): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(965,38): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(992,17): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(992,38): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(1010,17): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
-C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\snake_main.c(1010,38): warning C4047: '==': 'int'의 간접 참조 수준이 'void *'과(와) 다릅니다.
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(517,5): warning MSB8004: Output 디렉터리가 슬래시로 끝나지 않습니다. Output 디렉터리의 적절한 평가를 허용하는 데 필요하므로 이 빌드 인스턴스에서 슬래시를 추가합니다.
   코드를 생성하고 있습니다.
-  2 of 34 functions ( 5.9%) were compiled, the rest were copied from previous compilation.
+  코드를 생성했습니다.
+  0 of 34 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
-  코드를 생성했습니다.
-  Snake_Game.vcxproj -> C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\x64\Release\Snake_Game.exe
+  Snake_Game.vcxproj -> C:\Users\wooju\OneDrive\Documents\GitHub\Snake-Game\Snake_Game\Snake_Game\Snake_Game.exe
