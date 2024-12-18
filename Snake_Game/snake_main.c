@@ -1,5 +1,4 @@
-﻿// C program to build the complete 
-// snake game 
+﻿// snake game 
 #include <conio.h> 
 #include <stdio.h> 
 #include <stdlib.h> 
@@ -91,6 +90,8 @@ char player[20] = "Anonym"; // 플레이어 이름, 기본값 = "Anonym"
 
 char best_player[20]; // 최고 점수 기록자 이름
 int highest_score = 0; // 최고 점수
+
+int effect = 0; // mystery 효과 번호
 
 /// 전역 변수 선언 종료 ///
 
@@ -601,7 +602,12 @@ void change_score(int num, int change) {
 
 	switch (num) {
 	case 1:
-		score += ((score + change) >= 0 || change > 0) ? change : 0;
+		if (score >= 0 ) {
+			score += ((score + change) >= 0 || change > 0) ? change : -score;;
+		}
+		else {
+			score += change > 0 ? change : 0;
+		}
 		break;
 
 	case 2:
@@ -718,7 +724,8 @@ void setup()
 	fruitx = 0;
 	fruity = 0;
 
-	while (fruitx == 0 || fruity == 0) {
+	while (fruitx == 0 || fruity == 0 
+		|| (fruitx == head->x && fruity == head->y)) {
 		fruitx = rand() % (height - 1);
 		fruity = rand() % (width - 1);
 	}
@@ -735,7 +742,8 @@ void setup()
 	if (rand() % 100 < 10)
 	{
 		while (mysteryx == 0 || mysteryy == 0
-			|| (mysteryx == fruitx && mysteryy == fruity)) {
+			|| (mysteryx == fruitx && mysteryy == fruity)
+			|| (mysteryx == head->x && mysteryy == head->y)) {
 			mysteryx = rand() % (height - 1);
 			mysteryy = rand() % (width - 1);
 		}
@@ -753,7 +761,8 @@ void setup()
 
 	while (trapx == 0 || trapy == 0
 		|| (trapx == fruitx && trapy == fruity)
-		|| (trapx == mysteryx && trapy == mysteryy)) {
+		|| (trapx == mysteryx && trapy == mysteryy)
+		|| (trapx == head->x && trapy == head->y)) {
 		trapx = rand() % (height - 1);
 		trapy = rand() % (width-1);
 	}
@@ -775,7 +784,8 @@ void setup()
 	while (bomb[0].x == 0 || bomb[0].y == 0
 		|| (bomb[0].x == fruitx && bomb[0].y == fruity)
 		|| (bomb[0].x == mysteryx && bomb[0].y == mysteryy)
-		|| (bomb[0].x == trapx && bomb[0].y == trapy)) {
+		|| (bomb[0].x == trapx && bomb[0].y == trapy)
+		|| (bomb[0].x == head->x && bomb[0].y == head->y)) {	
 
 		bomb[0].x = rand() % (height - 1);
 		bomb[0].y = rand() % (width -1);
@@ -812,7 +822,10 @@ void draw()
 
 				if (i == 4 && j == width - 1) printf(" Player\t\t: %s\t ", player);
 				if (i == 5 && j == width - 1) printf(" Score\t\t: %-4d\t ", score);
-				if (i == 6 && j == width - 1) printf(" Level\t\t: %d\t ", level);
+				if (i == 6 && j == width - 1) printf(" Length\t\t: %-d\t ", body_length);
+				if (i == 7 && j == width - 1) printf(" Level\t\t: %d\t ", level);
+
+				//if (i == 9 && j == width - 1) printf(" effect\t\t: %d\t ", effect);
 
 
 			}
@@ -914,22 +927,22 @@ void logic()
 {
 	// 점수가 50이 증가할 때마다 레벨 +1
 	if (score >= 200) {
-		if (st_level == 1) level = 5;
+		if (st_level == 1 && level == 4) level = 5;
 	}
 	else if (score >= 150) {
-		if (st_level == 1) level = 4;
-		if (st_level == 2) level = 5;
+		if (st_level == 1 && level == 3) level = 4;
+		if (st_level == 2 && level == 4) level = 5;
 	}
 	else if (score >= 100) {
-		if (st_level == 1) level = 3;
-		if (st_level == 2) level = 4;
-		if (st_level == 3) level = 5;
+		if (st_level == 1 && level == 2) level = 3;
+		if (st_level == 2 && level == 3) level = 4;
+		if (st_level == 3 && level == 4) level = 5;
 	}
 	else if (score >= 50) {
-		if (st_level == 1) level = 2;
-		if (st_level == 2) level = 3;
-		if (st_level == 3) level = 4;
-		if (st_level == 4) level = 5;
+		if (st_level == 1 && level == 1) level = 2;
+		if (st_level == 2 && level == 2) level = 3;
+		if (st_level == 3 && level == 3) level = 4;
+		if (st_level == 4 && level == 4) level = 5;
 	}
 
 
@@ -957,7 +970,8 @@ void logic()
 				|| (bomb[1].x == mysteryx && bomb[1].y == mysteryy)
 				|| (bomb[1].x == trapx && bomb[1].y == trapy)
 				|| (bomb[1].x == bomb[0].x && bomb[1].y == bomb[0].y)
-				|| (round_snake(head, bomb[1].x, bomb[1].y))) 
+				|| (round_snake(head, bomb[1].x, bomb[1].y))
+				|| (round_snake(cut_bodies, bomb[1].x, bomb[1].y)))
 			{
 
 				bomb[1].x = rand() % (height - 1);
@@ -984,7 +998,8 @@ void logic()
 				|| (bomb[2].x == trapx && bomb[2].y == trapy)
 				|| (bomb[2].x == bomb[0].x && bomb[2].y == bomb[0].y)
 				|| (bomb[2].x == bomb[1].x && bomb[2].y == bomb[1].y)
-				|| (round_snake(head, bomb[2].x, bomb[2].y))) 
+				|| (round_snake(head, bomb[2].x, bomb[2].y))
+				|| (round_snake(cut_bodies, bomb[2].x, bomb[2].y)))
 			{
 
 				bomb[2].x = rand() % (height - 1);
@@ -1002,7 +1017,8 @@ void logic()
 				|| (bomb[3].x == bomb[0].x && bomb[3].y == bomb[0].y)
 				|| (bomb[3].x == bomb[1].x && bomb[3].y == bomb[1].y)
 				|| (bomb[3].x == bomb[2].x && bomb[3].y == bomb[2].y)
-				|| (round_snake(head, bomb[3].x, bomb[3].y))) 
+				|| (round_snake(head, bomb[3].x, bomb[3].y))
+				|| (round_snake(cut_bodies, bomb[3].x, bomb[3].y)))
 			{
 
 				bomb[3].x = rand() % (height - 1);
@@ -1064,7 +1080,8 @@ void logic()
 			|| (fruitx == bomb[1].x && fruity == bomb[1].y)
 			|| (fruitx == bomb[2].x && fruity == bomb[2].y)
 			|| (fruitx == bomb[3].x && fruity == bomb[3].y)
-			|| (round_snake(head, fruitx, fruity))) 
+			|| (round_snake(head, fruitx, fruity))
+			|| (round_snake(cut_bodies, fruitx, fruity)))
 		{
 			fruitx = rand() % (height - 1);
 			fruity = rand() % (width - 1);
@@ -1096,7 +1113,8 @@ void logic()
 				|| (i != 1 &&(bomb[i].x == bomb[1].x && bomb[i].y == bomb[1].y))
 				|| (i != 2 && (bomb[i].x == bomb[2].x && bomb[i].y == bomb[2].y))
 				|| (i != 3 && (bomb[i].x == bomb[3].x && bomb[i].y == bomb[3].y))
-				|| (round_snake(head, bomb[i].x, bomb[i].y))) 
+				|| (round_snake(head, bomb[i].x, bomb[i].y))
+				|| (round_snake(cut_bodies, bomb[i].x, bomb[i].y)))
 			{
 
 				bomb[i].x = rand() % (height - 1);
@@ -1114,7 +1132,8 @@ void logic()
 			|| (mysteryx == bomb[1].x && mysteryy == bomb[1].y)
 			|| (mysteryx == bomb[2].x && mysteryy == bomb[2].y)
 			|| (mysteryx == bomb[3].x && mysteryy == bomb[3].y)
-			|| (round_snake(head, mysteryx, mysteryy)))
+			|| (round_snake(head, mysteryx, mysteryy))
+			|| (round_snake(cut_bodies, mysteryx, mysteryy)))
 		{
 			mysteryx = rand() % (height - 1);
 			mysteryy = rand() % (width - 1);
@@ -1139,7 +1158,8 @@ void logic()
 				|| (mysteryx == bomb[1].x && mysteryy == bomb[1].y)
 				|| (mysteryx == bomb[2].x && mysteryy == bomb[2].y)
 				|| (mysteryx == bomb[3].x && mysteryy == bomb[3].y)
-				|| (round_snake(head, mysteryx, mysteryy)))
+				|| (round_snake(head, mysteryx, mysteryy))
+				|| (round_snake(cut_bodies, mysteryx, mysteryy)))
 			{
 				mysteryx = rand() % (height - 1);
 				mysteryy = rand() % (width - 1);
@@ -1149,17 +1169,17 @@ void logic()
 		}
 			
 
-		int effect = rand() % 3;
+		effect = rand() % 3 + 1;
 		switch (effect) {
-		case 0: // 점수 증가
+		case 1: // 점수 증가
 			change_score(1, random_num(50));
 			break;
 
-		case 1: // 점수 감소
+		case 2: // 점수 감소
 			change_score(1, -random_num(50));
 			break;
 
-		case 2: // 몸통 길이 증가
+		case 3: // 몸통 길이 증가
 			body_add(random_num(5));
 			break;
 		}
@@ -1188,7 +1208,8 @@ void logic()
 			|| (trapx == bomb[1].x && trapy == bomb[1].y)
 			|| (trapx == bomb[2].x && trapy == bomb[2].y)
 			|| (trapx == bomb[3].x && trapy == bomb[3].y)
-			||(round_snake(head, trapx, trapy))) 
+			||(round_snake(head, trapx, trapy))
+			|| (round_snake(cut_bodies, trapx, trapy)))
 		{
 			trapx = rand() % (height - 1);
 			trapy = rand() % (width - 1);
@@ -1207,7 +1228,7 @@ void logic()
 			prev = cur;
 			cur = cur->next;
 		}
-
+		body_length -= cut_num;
 
 	}
 
@@ -1232,6 +1253,8 @@ void gameover_screen() {
 	printf("Name\t: %s", player);
 	gotoxy(33, 7);
 	printf("Score\t: %d", score);
+	gotoxy(33, 10);
+	printf("Length\t: %d", body_length);
 
 	gotoxy(30, 13);
 	printf("=========================");
