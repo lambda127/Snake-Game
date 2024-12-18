@@ -1,6 +1,7 @@
 # Snake Game
 2024-2 C 프로그래밍 실습 최종과제 문제 - 지렁이 게임(Snake Game)
 
+- 시연 영상 : https://1drv.ms/v/c/9157a906b9e6f940/EUlqvjMcmlFDsH_y-w3gmPkBPIBxvNMMxCHxDFHEYRtgHw?e=eUWYr1
 
 
 01. 시스템적 기능
